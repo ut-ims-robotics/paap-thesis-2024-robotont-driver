@@ -9,7 +9,6 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   std_msgs
-  joy
   tf
   nav_msgs
   cmake_modules
@@ -20,7 +19,6 @@ catkin_package(
   CATKIN_DEPENDS
     geometry_msgs
     std_msgs
-    joy
     tf
     nav_msgs
     serial
