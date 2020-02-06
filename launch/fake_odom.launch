@@ -1,0 +1,8 @@
+<launch>
+    <param name="robot_description" command="$(find xacro)/xacro --inorder $(find robotont_description)/xacro/robotont_base.urdf.xacro"/>
+    <param name="robot_description_semantic" command="$(find xacro)/xacro --inorder $(find robotont_description)/xacro/robotont_base.urdf.xacro"/>
+    
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+    <node name="fake_odom_publiher" pkg="robotont_driver" type="fake_odom_publisher" output="screen"/>    
+</launch>
