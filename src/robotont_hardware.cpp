@@ -151,6 +151,50 @@ void RobotontHW::processPacket()
     odom_.update(pos_x, pos_y, ori_z, lin_vel_x, lin_vel_y, ang_vel_z);
     odom_.publish();
   }
+  if (arg[0] == "SENSOR")
+  {  
+    for (int i = 1; i < 13; i++)
+    {
+      std::getline(ss, arg[i], ':');
+      if (!arg[i].length())
+      {
+        return;  // invalid packet
+      }
+    }
+    int sensor[12];
+
+    int sensor[0] = stoi(arg[1].c_str());
+    int sensor[1] = stoi(arg[2].c_str());
+    int sensor[2] = stoi(arg[3].c_str());
+    int sensor[3] = stoi(arg[4].c_str()); 
+    int sensor[4] = stoi(arg[5].c_str());
+    int sensor[5] = stoi(arg[6].c_str());
+    int sensor[6] = stoi(arg[7].c_str());
+    int sensor[7] = stoi(arg[8].c_str());
+    int sensor[8] = stoi(arg[9].c_str());
+    int sensor[9] = stoi(arg[10].c_str());
+    int sensor[10] = stoi(arg[11].c_str());
+    int sensor[11] = stoi(arg[12].c_str());
+
+    sensor_.update(sensors); //"sensor_" nimetus peaks olema praegu unknown?
+  }
+}
+
+void RobotontHW::writeLED_State(int index, int red, int green, int blue)
+{  
+  std::stringstream ss;
+  ss << "LED:";
+  ss << red << ":";
+  ss << green << ":";
+  ss << blue << "\r\n";
+  write(ss.str());
+}
+
+void RobotontHW::writeLED_SEG(int starting_index, int ledid[])
+{  
+  std::stringstream ss;
+  ss << "LED:";
+  //TODO: Set led segment according to array.
 }
 
 void RobotontHW::writeMotorSpeed(float speed_m1, float speed_m2, float speed_m3)
