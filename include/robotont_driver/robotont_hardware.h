@@ -1,6 +1,11 @@
 #include <ros/ros.h>
 #include <serial/serial.h>
 #include "robotont_driver/odom.h"
+#include "robotont_driver/range_sensor.h"
+
+// We have 18 RGB leds, which requires
+// 3*18 arguments + 3 for the header
+#define MAX_ARGS 60
 
 namespace robotont
 {
@@ -20,6 +25,7 @@ private:
   void cmd_vel_callback(const geometry_msgs::Twist& cmd_vel_msg);
 
   Odom odom_;
+  RangeSensor range_sensor_;
   serial::Serial serial_;
   std::string packet_;
 

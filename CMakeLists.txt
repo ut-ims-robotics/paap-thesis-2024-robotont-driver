@@ -5,22 +5,24 @@ project(robotont_driver)
 find_package(Eigen3 REQUIRED)
 
 find_package(catkin REQUIRED COMPONENTS
-  geometry_msgs
   roscpp
   rospy
   std_msgs
-  tf
+  sensor_msgs
+  geometry_msgs
   nav_msgs
+  tf
   cmake_modules
   serial
 )
 
 catkin_package(
   CATKIN_DEPENDS
-    geometry_msgs
     std_msgs
-    tf
+    sensor_msgs
+    geometry_msgs
     nav_msgs
+    tf
     serial
     DEPENDS EIGEN3
 )
@@ -30,7 +32,7 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-add_executable(driver_node src/driver_node.cpp src/robotont_hardware.cpp src/odom.cpp ) 
+add_executable(driver_node src/driver_node.cpp src/robotont_hardware.cpp src/odom.cpp src/range_sensor.cpp) 
 add_executable(gazebo_driver_node src/gazebo_driver.cpp) 
 add_executable(gazebo_odom_node src/gazebo_odom.cpp) 
 add_executable (fake_odom_publisher src/fake_odom_publisher.cpp)

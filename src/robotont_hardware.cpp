@@ -119,17 +119,16 @@ void RobotontHW::read(const ros::TimerEvent& event)
 
 void RobotontHW::processPacket()
 {
-
   if(packet_.length() <= 2)
   {
     return;
   }
 
   std::stringstream ss(packet_);
-  std::string arg[7];
+  std::string arg[MAX_ARGS];
   std::getline(ss, arg[0], ':');
 
-  // parse motor speeds packet format [SPEED:speed_m0:speed_m1:speed_m2]
+  // parse odometry packet [ODOM:posx:posy:oriz:linvelx:linvely:angvelz]
   if (arg[0] == "ODOM")
   {
     for (int i = 1; i < 7; i++)
@@ -151,9 +150,11 @@ void RobotontHW::processPacket()
     odom_.update(pos_x, pos_y, ori_z, lin_vel_x, lin_vel_y, ang_vel_z);
     odom_.publish();
   }
-  if (arg[0] == "SENSOR")
+
+  // parse range sensor packet [RANGE:range1:range2:...:range11,range12], (units: mm)
+  else if (arg[0] == "RANGE")
   {  
-    for (int i = 1; i < 13; i++)
+    for (int i = 1; i < RANGE_SENSOR_COUNT + 1; i++)
     {
       std::getline(ss, arg[i], ':');
       if (!arg[i].length())
@@ -161,41 +162,35 @@ void RobotontHW::processPacket()
         return;  // invalid packet
       }
     }
-    int sensor[12];
 
-    int sensor[0] = stoi(arg[1].c_str());
-    int sensor[1] = stoi(arg[2].c_str());
-    int sensor[2] = stoi(arg[3].c_str());
-    int sensor[3] = stoi(arg[4].c_str()); 
-    int sensor[4] = stoi(arg[5].c_str());
-    int sensor[5] = stoi(arg[6].c_str());
-    int sensor[6] = stoi(arg[7].c_str());
-    int sensor[7] = stoi(arg[8].c_str());
-    int sensor[8] = stoi(arg[9].c_str());
-    int sensor[9] = stoi(arg[10].c_str());
-    int sensor[10] = stoi(arg[11].c_str());
-    int sensor[11] = stoi(arg[12].c_str());
+    std::vector<float> ranges; // Vector with range measurements in meters
+    for (int i=1; i<RANGE_SENSOR_COUNT + 1; i++)
+    {
+      // Convert from [mm] to [m] and add to vector
+      ranges.push_back(atof(arg[i].c_str()) / 100);
+    }
 
-    sensor_.update(sensors); //"sensor_" nimetus peaks olema praegu unknown?
+    range_sensor_.update(ranges); // Update the readings in the sensor class
+    range_sensor_.publish();       // Publish the readings
   }
 }
 
-void RobotontHW::writeLED_State(int index, int red, int green, int blue)
-{  
-  std::stringstream ss;
-  ss << "LED:";
-  ss << red << ":";
-  ss << green << ":";
-  ss << blue << "\r\n";
-  write(ss.str());
-}
-
-void RobotontHW::writeLED_SEG(int starting_index, int ledid[])
-{  
-  std::stringstream ss;
-  ss << "LED:";
-  //TODO: Set led segment according to array.
-}
+//void RobotontHW::writeLED_State(int index, unsigned char red, unsigned char green, unsigned char blue)
+//{  
+//  std::stringstream ss;
+//  ss << "LED:";
+//  ss << red << ":";
+//  ss << green << ":";
+//  ss << blue << "\r\n";
+//  write(ss.str());
+//}
+//
+//void RobotontHW::writeLED_SEG(int starting_index, int ledid[])
+//{  
+//  std::stringstream ss;
+//  ss << "LED:";
+//  //TODO: Set led segment according to array.
+//}
 
 void RobotontHW::writeMotorSpeed(float speed_m1, float speed_m2, float speed_m3)
 {
@@ -241,58 +236,4 @@ void RobotontHW::cmd_vel_callback(const geometry_msgs::Twist& cmd_vel_msg)
 //  ROS_INFO_STREAM("I heard: \r\n" << cmd_vel_msg);
   writeRobotSpeed(cmd_vel_msg.linear.x, cmd_vel_msg.linear.y, cmd_vel_msg.angular.z);
 }
-
-  /*
-
-  float vel_x = cmd_vel_msg.linear.x;
-  float vel_y = -cmd_vel_msg.linear.y;
-  float vel_t = cmd_vel_msg.angular.z;
-
-  int motorCount = wheelAmount;
-
-  float robotSpeed = 0;
-
-  if (vel_x == 0)
-  {
-    robotSpeed = std::abs(vel_y);
-  }
-  else if (vel_y == 0)
-  {
-    robotSpeed = std::abs(vel_x);
-  }
-  else
-  {
-    robotSpeed = sqrt(vel_x * vel_x + vel_y * vel_y);
-  }
-
-  float robotDirectionAngle = atan2(vel_x, vel_y);
-
-  // ROS_INFO_STREAM("robotDirectionAngle: " << (float)wheelAngles[0]); //debug purpouse
-
-  float robotAngularVelocity = -vel_t * angular_vel_scaler;
-
-  float wheelLinearVelocity[motorCount];
-  float wheelAngularSpeedMainboardUnits[motorCount];
-
-  for (int i = 0; i < motorCount; i++)
-  {
-		wheelLinearVelocity[i] = robotSpeed * cos(robotDirectionAngle - wheelAngles[i]) + wheelDistanceFromCenter * robotAngularVelocity;
-		wheelAngularSpeedMainboardUnits[i] = wheelLinearVelocity[i] * wheelSpeedToMainboardUnits;
-    }
-
-
-    if (vel_x == 0 and vel_y == 0 and vel_t == 0){
-		m0 = m1 = m2 = 0;
-		output_cmd = "\x1B\r\n"; //send ESC, which means stop
-    }
-    else {
-		m0 = wheelAngularSpeedMainboardUnits[0] * wheel_ang_scaler;
-		m1 = wheelAngularSpeedMainboardUnits[1] * wheel_ang_scaler;
-		m2 = wheelAngularSpeedMainboardUnits[2] * wheel_ang_scaler;
-		std::stringstream sstm;
-		//    sstm << 'a' << static_cast<int>(m0) << 'b' << static_cast<int>(m1) << 'c' << static_cast<int>(m2) << '\n'; // for previous firmware implementation
-		sstm << static_cast<int>(m0) << ':' << static_cast<int>(m1) << ':' << static_cast<int>(m2) << '\r' <<'\n';
-    }
-*/
-
 }  // namespace robotont
