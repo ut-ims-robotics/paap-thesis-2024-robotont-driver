@@ -2,20 +2,16 @@
 
 namespace robotont
 {
-RobotontHW::RobotontHW()
+RobotontHW::RobotontHW() : reconnect_requested_(false)
 {
-  ROS_DEBUG("Robotont driver is starting...");
+  ROS_DEBUG("Loading hardware communication class ...");
 
   // Get parameters from ROS parameter server
   std::string robotont_port;
   int robotont_baudrate;
-  std::string odom_frame;
-  std::string odom_child_frame;
 
-  nh_.param("serial/port", robotont_port, std::string("/dev/ttyACM0"));    
-  nh_.param("serial/baudrate", robotont_baudrate, 115200);    
-  nh_.param("odom/frame", odom_frame, std::string("odom"));    
-  nh_.param("odom/child_frame", odom_child_frame, std::string("base_footprint"));    
+  nh_.param("serial/port", robotont_port, std::string("/dev/ttyACM0"));
+  nh_.param("serial/baudrate", robotont_baudrate, 115200);
 
   // configure serial
   serial_.setPort(robotont_port);
@@ -23,18 +19,18 @@ RobotontHW::RobotontHW()
   serial::Timeout timeout = serial::Timeout::simpleTimeout(1000);
   serial_.setTimeout(timeout);
 
-  // Configure odom frames
-  odom_.setFrameId(odom_frame);
-  odom_.setChildFrameId(odom_child_frame);
-
   connect();
-  // Port is open, ready to communicate.
+  
+  // Set up a timer to reconnect whenever the connection to hardware should drop
+  timer_ = nh_.createTimer(ros::Duration(.5), &RobotontHW::checkConnection, this);
+}
 
-  // Create a timer to periodically read data from the serial buffer
-  timer_ = nh_.createTimer(ros::Duration(0.01), &RobotontHW::read, this);
-
-  // Subscribe to command velocity topic
-  cmd_vel_sub_ = nh_.subscribe("cmd_vel", 1, &RobotontHW::cmd_vel_callback, this);
+RobotontHW::~RobotontHW()
+{
+  // Send ESC key to stop the motors on exit
+  RobotontPacket packet;
+  packet.push_back("\x1B");
+  writePacket(packet);
 }
 
 void RobotontHW::connect()
@@ -45,138 +41,187 @@ void RobotontHW::connect()
     serial_.close();
   }
 
-  do
+  // Try to open the serial port
+  try
   {
-    // Try to open the serial port
-    try
-    {
-      serial_.open();
-    }
-    catch (serial::IOException e)
-    {
-      ROS_ERROR_STREAM("Unable to open port '" << serial_.getPort() << "': " << e.what());
-    }
-    catch (serial::SerialException e)
-    {
-      ROS_ERROR_STREAM("Unable to open port '" << serial_.getPort() << "': " << e.what());
-    }
+    serial_.open();
+  }
+  catch (serial::IOException e)
+  {
+    ROS_ERROR_STREAM_THROTTLE(1, "Unable to open port '" << serial_.getPort() << "': " << e.what());
+  }
+  catch (serial::SerialException e)
+  {
+    ROS_ERROR_STREAM_THROTTLE(1, "Unable to open port '" << serial_.getPort() << "': " << e.what());
+  }
 
-    if (serial_.isOpen())
-      ROS_DEBUG_STREAM("Connected to serial port '" << serial_.getPort() << "'");
-    else
-      ROS_WARN("Failed to open Serial port, retrying after 1 sec...");
-    ros::Duration(1).sleep();
-  } while (!serial_.isOpen() && ros::ok());
+  if (serial_.isOpen())
+  {
+    ROS_DEBUG_STREAM("Connected to serial port '" << serial_.getPort() << "'");
+  }
 }
 
-RobotontHW::~RobotontHW()
+void RobotontHW::checkConnection(const ros::TimerEvent& event)
 {
-  std::string packet = "\x1B";
-  write(packet);
+  if (!serial_.isOpen() || reconnect_requested_)
+  {
+    connect();  // Reconnent if not connected for some reason.
+  }
 }
 
-void RobotontHW::read(const ros::TimerEvent& event)
+bool RobotontHW::readPacket(RobotontPacket& packet)
 {
-
-  std::string buffer = "";
-
+  // Collect all bytes from the serial buffer.
   try
   {
     size_t bytes_available = serial_.available();
     //  ROS_DEBUG("bytes available: %lu", bytes_available);
-    if (!bytes_available)
+    if (bytes_available)
     {
-      return;
+      std::string new_data = "";
+      serial_.read(new_data, bytes_available);
+      packet_buffer_.append(new_data);  // TODO: no max size set, handle the situation if polled too slowly
     }
+  }
+  catch (serial::IOException e)
+  {
+    reconnect_requested_ = true;
+  }
+  catch (serial::SerialException e)
+  {
+    reconnect_requested_ = true;
+  }
+  catch (serial::PortNotOpenedException)
+  {
+    reconnect_requested_ = true;
+  }
 
-    serial_.read(buffer, bytes_available);
-  }
-  catch(serial::IOException e)
+  // Trim line endings from the left
+  size_t packet_beg_pos = packet_buffer_.find_first_not_of("\r\n");
+  if (packet_beg_pos == std::string::npos)
   {
-    connect();
+    // buffer empty or contains only newline chars, clear everything
+    packet_buffer_ = "";
+    return false;
   }
-  catch(serial::SerialException e)
+  else
   {
-    connect();
+    packet_buffer_.erase(0, packet_beg_pos);  // Trim
   }
 
-  while(buffer.size())
+  // Analyze the buffer by searching the line ending characters
+  size_t packet_end_pos = packet_buffer_.find_first_of("\r\n");
+  if (packet_end_pos == std::string::npos)
   {
-    if(buffer[0] == '\r' || buffer[0] == '\n')
+    // Packet in buffer not yet complete
+    return false;
+  }
+
+  // The buffer contains at least one symbol marking packet ending
+  if (packet_end_pos > 2)  // Check a minimum size requirement for a valid packet
+  {
+    // Remove this packet from the buffer, the remaining newlines will be trimmed with next call
+    std::string packet_str = packet_buffer_.substr(0, packet_end_pos);
+    packet_buffer_.erase(0, packet_end_pos);
+
+    // Unflatten the packet
+    std::stringstream packet_ss(packet_str);
+    std::string arg;
+    packet.clear();
+    while (std::getline(packet_ss, arg, ':'))
     {
-      processPacket();
-      packet_ = "";
+      packet.push_back(arg);
     }
-    else
-    {
-      packet_.push_back(buffer[0]);
-    }
-
-    buffer.erase(buffer.begin());
+    return true;
   }
+
+  // Invalid packet, clear the buffer
+  packet_buffer_ = "";
+  return false;
 }
 
-
-void RobotontHW::processPacket()
+void RobotontHW::writePacket(const RobotontPacket& packet)
 {
-  if(packet_.length() <= 2)
+  if (packet.empty())
   {
     return;
   }
 
-  std::stringstream ss(packet_);
-  std::string arg[MAX_ARGS];
-  std::getline(ss, arg[0], ':');
-
-  // parse odometry packet [ODOM:posx:posy:oriz:linvelx:linvely:angvelz]
-  if (arg[0] == "ODOM")
+  // Flatten the packet
+  std::stringstream packet_ss;
+  for (RobotontPacket::const_iterator it = packet.begin(); it != packet.end(); ++it)
   {
-    for (int i = 1; i < 7; i++)
+    if (++it == packet.end())
     {
-      std::getline(ss, arg[i], ':');
-      if (!arg[i].length())
-      {
-        return;  // invalid packet
-      }
+      packet_ss << *it;
     }
-
-    float pos_x = atof(arg[1].c_str());
-    float pos_y = atof(arg[2].c_str());
-    float ori_z = atof(arg[3].c_str());
-    float lin_vel_x = atof(arg[4].c_str());
-    float lin_vel_y = atof(arg[5].c_str());
-    float ang_vel_z = atof(arg[6].c_str());
-
-    odom_.update(pos_x, pos_y, ori_z, lin_vel_x, lin_vel_y, ang_vel_z);
-    odom_.publish();
+    else
+    {
+      packet_ss << *it << ":";
+    }
   }
+  packet_ss << "\r\n";
 
-  // parse range sensor packet [RANGE:range1:range2:...:range11,range12], (units: mm)
-  else if (arg[0] == "RANGE")
-  {  
-    for (int i = 1; i < RANGE_SENSOR_COUNT + 1; i++)
-    {
-      std::getline(ss, arg[i], ':');
-      if (!arg[i].length())
-      {
-        return;  // invalid packet
-      }
-    }
-
-    std::vector<float> ranges; // Vector with range measurements in meters
-    for (int i=1; i<RANGE_SENSOR_COUNT + 1; i++)
-    {
-      // Convert from [mm] to [m] and add to vector
-      ranges.push_back(atof(arg[i].c_str()) / 100);
-    }
-
-    range_sensor_.update(ranges); // Update the readings in the sensor class
-    range_sensor_.publish();       // Publish the readings
+  try
+  {
+    serial_.write(packet_ss.str());
+  }
+  catch (serial::IOException e)
+  {
+    reconnect_requested_ = true;
+  }
+  catch (serial::SerialException e)
+  {
+    reconnect_requested_ = true;
+  }
+  catch (serial::PortNotOpenedException)
+  {
+    reconnect_requested_ = true;
   }
 }
+}  // namespace robotont
 
-//void RobotontHW::writeLED_State(int index, unsigned char red, unsigned char green, unsigned char blue)
-//{  
+
+// void RobotontHW::processPacket()
+//{
+//  if (packet_.length() <= 2)
+//  {
+//    return;
+//  }
+//
+//  std::stringstream ss(packet_);
+//  std::string arg[MAX_ARGS];
+//  std::getline(ss, arg[0], ':');
+//
+//
+//// parse range sensor packet [RANGE:range1:range2:...:range11,range12], (units: mm)
+// else if (arg[0] == "RANGE")
+//{
+////TODO: dynamically load appropriate module
+//
+//  for (int i = 1; i < RANGE_SENSOR_COUNT + 1; i++)
+//  {
+//    std::getline(ss, arg[i], ':');
+//    if (!arg[i].length())
+//    {
+//      return;  // invalid packet
+//    }
+//  }
+
+//  std::vector<float> ranges; // Vector with range measurements in meters
+//  for (int i=1; i<RANGE_SENSOR_COUNT + 1; i++)
+//  {
+//    // Convert from [mm] to [m] and add to vector
+//    ranges.push_back(atof(arg[i].c_str()) / 100);
+//  }
+
+//  range_sensor_.update(ranges); // Update the readings in the sensor class
+//  range_sensor_.publish();       // Publish the readings
+//}
+//}
+
+// void RobotontHW::writeLED_State(int index, unsigned char red, unsigned char green, unsigned char blue)
+//{
 //  std::stringstream ss;
 //  ss << "LED:";
 //  ss << red << ":";
@@ -185,55 +230,9 @@ void RobotontHW::processPacket()
 //  write(ss.str());
 //}
 //
-//void RobotontHW::writeLED_SEG(int starting_index, int ledid[])
-//{  
+// void RobotontHW::writeLED_SEG(int starting_index, int ledid[])
+//{
 //  std::stringstream ss;
 //  ss << "LED:";
 //  //TODO: Set led segment according to array.
 //}
-
-void RobotontHW::writeMotorSpeed(float speed_m1, float speed_m2, float speed_m3)
-{
-  std::stringstream ss;
-  ss << "MS:";
-  ss << speed_m1 << ":";
-  ss << speed_m2 << ":";
-  ss << speed_m3 << "\r\n";
-  write(ss.str());
-}
-
-void RobotontHW::writeRobotSpeed(float lin_vel_x, float lin_vel_y, float ang_vel_z)
-{
-  std::stringstream ss;
-  ss << "RS:";
-  ss << lin_vel_x << ":";
-  ss << lin_vel_y << ":";
-  ss << ang_vel_z << "\r\n";
-  write(ss.str());
-}
-
-void RobotontHW::write(const std::string& packet)
-{
-  try
-  {
-    serial_.write(packet);
-  }
-  catch(serial::IOException e)
-  {
-    connect();
-  }
-  catch(serial::SerialException e)
-  {
-    // something went wrong, make sure we're connected
-    // TODO: maybe not the best style to reconnect here as this will block the callback until reconnected
-    // (same pattern in read())
-    connect();
-  }
-}
-
-void RobotontHW::cmd_vel_callback(const geometry_msgs::Twist& cmd_vel_msg)
-{
-//  ROS_INFO_STREAM("I heard: \r\n" << cmd_vel_msg);
-  writeRobotSpeed(cmd_vel_msg.linear.x, cmd_vel_msg.linear.y, cmd_vel_msg.angular.z);
-}
-}  // namespace robotont

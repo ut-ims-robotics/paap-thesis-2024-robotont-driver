@@ -1,7 +1,8 @@
+#ifndef ROBOTONT_HARDWARE_
+#define ROBOTONT_HARDWARE_
+
 #include <ros/ros.h>
 #include <serial/serial.h>
-#include "robotont_driver/odom.h"
-#include "robotont_driver/range_sensor.h"
 
 // We have 18 RGB leds, which requires
 // 3*18 arguments + 3 for the header
@@ -9,28 +10,36 @@
 
 namespace robotont
 {
+typedef std::vector<std::string> RobotontPacket;
+
 class RobotontHW
 {
 public:
   RobotontHW();
   ~RobotontHW();
 
+  /**
+   * \brief Reads the packet from the robot
+   * \param packet The packet contents.
+   * \return True if the complete packet was placed in \packet packet variable, False if no data has arrived or the
+   * packet is not yet complete
+   */
+  bool readPacket(RobotontPacket& packet);
+  void writePacket(const RobotontPacket& packet);
+
 private:
   void connect();
-  void read(const ros::TimerEvent& event);
-  void processPacket();
-  void write(const std::string& packet);
-  void writeRobotSpeed(float lin_vel_x, float lin_vel_y, float ang_vel_z);
-  void writeMotorSpeed(float speed_m1, float speed_m2, float speed_m3);
-  void cmd_vel_callback(const geometry_msgs::Twist& cmd_vel_msg);
+  void checkConnection(const ros::TimerEvent& event);
 
-  Odom odom_;
-  RangeSensor range_sensor_;
   serial::Serial serial_;
-  std::string packet_;
+  std::string packet_buffer_;
 
   ros::NodeHandle nh_;
   ros::Timer timer_;
-  ros::Subscriber cmd_vel_sub_;
+  bool reconnect_requested_;
 };
-}
+
+typedef std::shared_ptr<RobotontHW> RobotontHWPtr;
+}  // namespace robotont
+
+#endif
