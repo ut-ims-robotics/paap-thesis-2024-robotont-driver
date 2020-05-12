@@ -149,9 +149,9 @@ void RobotontHW::writePacket(const RobotontPacket& packet)
 
   // Flatten the packet
   std::stringstream packet_ss;
-  for (RobotontPacket::const_iterator it = packet.begin(); it != packet.end(); ++it)
+  for (RobotontPacket::const_iterator it = packet.begin(); it != packet.end(); it++)
   {
-    if (++it == packet.end())
+    if (it + 1 == packet.end())
     {
       packet_ss << *it;
     }
@@ -164,6 +164,7 @@ void RobotontHW::writePacket(const RobotontPacket& packet)
 
   try
   {
+//    ROS_DEBUG_STREAM("Writing '" << packet_ss.str() << "'");
     serial_.write(packet_ss.str());
   }
   catch (serial::IOException e)
