@@ -164,7 +164,7 @@ void RobotontHW::writePacket(const RobotontPacket& packet)
 
   try
   {
-//    ROS_DEBUG_STREAM("Writing '" << packet_ss.str() << "'");
+    ROS_DEBUG_STREAM("Writing '" << packet_ss.str() << "'");
     serial_.write(packet_ss.str());
   }
   catch (serial::IOException e)

@@ -1,6 +1,8 @@
 #include "robotont_driver/robotont_driver.h"
 #include "robotont_driver/plugin_motors.h"
 #include "robotont_driver/plugin_odom.h"
+#include "robotont_driver/plugin_range.h"
+#include "robotont_driver/plugin_led_module.h"
 
 namespace robotont
 {
@@ -12,6 +14,8 @@ namespace robotont
     // initialize builtin plugins
     plugins_.emplace_back(std::make_shared<PluginMotors>(hw_ptr_, "Motors"));
     plugins_.emplace_back(std::make_shared<PluginOdom>(hw_ptr_, "Odometry"));
+    plugins_.emplace_back(std::make_shared<PluginRange>(hw_ptr_, "Range sensor"));
+    plugins_.emplace_back(std::make_shared<PluginLedModule>(hw_ptr_, "LedModulePixel"));
 
     // Here we load all the possible plugins
     for (auto plugin : plugins_)
