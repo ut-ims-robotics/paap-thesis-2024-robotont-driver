@@ -1,6 +1,7 @@
 #include "robotont_driver/robotont_driver.h"
 #include "robotont_driver/plugin_motors.h"
 #include "robotont_driver/plugin_odom.h"
+#include "robotont_driver/plugin_power_supply.h"
 
 namespace robotont
 {
@@ -12,6 +13,7 @@ namespace robotont
     // initialize builtin plugins
     plugins_.emplace_back(std::make_shared<PluginMotors>(hw_ptr_, "Motors"));
     plugins_.emplace_back(std::make_shared<PluginOdom>(hw_ptr_, "Odometry"));
+    plugins_.emplace_back(std::make_shared<PluginPowerSupply>(hw_ptr_, "PowerSupply"));
 
     // Here we load all the possible plugins
     for (auto plugin : plugins_)

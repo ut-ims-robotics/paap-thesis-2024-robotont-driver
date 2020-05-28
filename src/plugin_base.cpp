@@ -18,7 +18,7 @@ void PluginBase::packetReceived(const RobotontPacket& packet)
 {
 }
 
-const std::string PluginBase::getName() const
+const std::string& PluginBase::getName() const
 {
   return name_;
 }
