@@ -4,6 +4,6 @@
     
     <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
-    <node name="fake_odom_publisher" pkg="robotont_driver" type="fake_odom_publisher" output="screen"/>    
+    <node name="fake_driver_node" pkg="robotont_driver" type="fake_driver_node" output="screen"/>    
 	<node name="rviz" pkg="rviz" type="rviz" args="-d $(find robotont_driver)/config/robotont_odom.rviz"/>
 </launch>
