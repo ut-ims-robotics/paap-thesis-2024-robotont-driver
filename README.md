@@ -15,7 +15,7 @@ This package handles low-level communication between ROS and robotont hardware.
 * If teleop twist keyboard is not installed:<br/>
 ```sudo apt-get install ros-melodic-teleop-twist-keyboard```
 
-### 3. Moving the robot using and Android device
+### 3. Moving the robot using an Android device
 * Find out your computer's ip-address:<br/>
 ```ifconfig```
 * From your Android device, go to Google Play Store and install the [ROS Control](https://play.google.com/store/apps/details?id=com.robotca.ControlApp&hl=en) app.
