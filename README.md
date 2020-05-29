@@ -20,7 +20,7 @@ This package handles low-level communication between ROS and robotont hardware.
 ```ifconfig```
 * From your Android device, go to Google Play Store and install the [ROS Control](https://play.google.com/store/apps/details?id=com.robotca.ControlApp&hl=en) app.
 * Open the ROS Control app on your phone.
-* Add a new robot using the plus sign on the top right corner and give it a desired name.
+* Add a new robot using the plus sign in the top right corner and give it a desired name.
 * Insert your computer's IP address into Master URI field by entering the following:<br/>
 ``` http://IP_address:11311 ```
 * Click on "Show advanced options" in the prompted window and fill in "Joystick" and "Odometry" topic names with "cmd_vel" and "odom", respectively.
