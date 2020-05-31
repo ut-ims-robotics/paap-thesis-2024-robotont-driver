@@ -16,15 +16,15 @@ void receiveCmd(geometry_msgs::Twist input_velocity)
 
 int main(int argc, char **argv)
 {
-    ros::init(argc, argv, "fake_odom_publisher");
+    ros::init(argc, argv, "fake_driver_node");
     ros::NodeHandle n;
     ros::Subscriber vel_sub = n.subscribe<geometry_msgs::Twist>("cmd_vel", 1000, receiveCmd);
     ros::Publisher odom_pub = n.advertise<nav_msgs::Odometry>("odom", 50);
     tf::TransformBroadcaster odom_broadcaster;
     std::string odom_frame;
     std::string base_frame;
-    n.param<std::string>("fake_odom_publisher/odom_frame", odom_frame, "odom");
-    n.param<std::string>("fake_odom_publisher/base_frame", base_frame, "base_footprint");
+    n.param<std::string>("fake_driver_node/odom_frame", odom_frame, "odom");
+    n.param<std::string>("fake_driver_node/base_frame", base_frame, "base_footprint");
 
     double x = 0.0;
     double y = 0.0;
