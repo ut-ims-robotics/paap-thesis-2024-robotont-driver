@@ -164,7 +164,7 @@ void RobotontHW::writePacket(const RobotontPacket& packet)
 
   try
   {
-//    ROS_DEBUG_STREAM("Writing '" << packet_ss.str() << "'");
+    ROS_DEBUG_STREAM("Writing '" << packet_ss.str() << "'");
     serial_.write(packet_ss.str());
   }
   catch (serial::IOException e)
@@ -181,59 +181,3 @@ void RobotontHW::writePacket(const RobotontPacket& packet)
   }
 }
 }  // namespace robotont
-
-
-// void RobotontHW::processPacket()
-//{
-//  if (packet_.length() <= 2)
-//  {
-//    return;
-//  }
-//
-//  std::stringstream ss(packet_);
-//  std::string arg[MAX_ARGS];
-//  std::getline(ss, arg[0], ':');
-//
-//
-//// parse range sensor packet [RANGE:range1:range2:...:range11,range12], (units: mm)
-// else if (arg[0] == "RANGE")
-//{
-////TODO: dynamically load appropriate module
-//
-//  for (int i = 1; i < RANGE_SENSOR_COUNT + 1; i++)
-//  {
-//    std::getline(ss, arg[i], ':');
-//    if (!arg[i].length())
-//    {
-//      return;  // invalid packet
-//    }
-//  }
-
-//  std::vector<float> ranges; // Vector with range measurements in meters
-//  for (int i=1; i<RANGE_SENSOR_COUNT + 1; i++)
-//  {
-//    // Convert from [mm] to [m] and add to vector
-//    ranges.push_back(atof(arg[i].c_str()) / 100);
-//  }
-
-//  range_sensor_.update(ranges); // Update the readings in the sensor class
-//  range_sensor_.publish();       // Publish the readings
-//}
-//}
-
-// void RobotontHW::writeLED_State(int index, unsigned char red, unsigned char green, unsigned char blue)
-//{
-//  std::stringstream ss;
-//  ss << "LED:";
-//  ss << red << ":";
-//  ss << green << ":";
-//  ss << blue << "\r\n";
-//  write(ss.str());
-//}
-//
-// void RobotontHW::writeLED_SEG(int starting_index, int ledid[])
-//{
-//  std::stringstream ss;
-//  ss << "LED:";
-//  //TODO: Set led segment according to array.
-//}

@@ -7,7 +7,7 @@
 
 /**
  * \brief PluginPowerSupply class
- * This plugin parses the ODOM packet and translates it to ROS odom message.
+ * This plugin parses packets with a POWER keyword and publishes data as a ROS message.
  */
 namespace robotont
 {
