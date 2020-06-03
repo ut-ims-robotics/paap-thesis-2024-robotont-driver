@@ -2,9 +2,6 @@ cmake_minimum_required(VERSION 2.8.3)
 project(robotont_driver)
 add_compile_options(-std=c++11)
 
-# Setup Eigen3 variables
-find_package(Eigen3 REQUIRED)
-
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
@@ -27,7 +24,6 @@ catkin_package(
     robotont_msgs
     tf
     serial
-    DEPENDS EIGEN3
 )
 
 include_directories(
