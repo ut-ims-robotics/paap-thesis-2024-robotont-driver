@@ -4,9 +4,17 @@
   <version>0.0.1</version>
   <description>The robotont_driver package</description>
 
-  <author email="veix123@gmail.com">Veiko Vunder</author>
+  <author>Raid Vellering</author>
+  <author>Martin Maidla</author>
+  <author>Madis Kaspar Nigol</author>
+  <author>Veiko Vunder</author>
 
-  <maintainer email="veix123@gmail.com">Veiko Vunder</maintainer>
+  <maintainer email="veiko.vunder@ut.ee">Veiko Vunder</maintainer>
+  <maintainer email="karl.kruusamae@ut.ee">Karl Kruusamäe</maintainer>
+
+  <url type="website">https://wiki.ros.org/robotont</url>
+  <url type="website">http://robotont.ut.ee</url>
+  <url type="repository">http://github.com/robotont/robotont_driver</url>
 
   <license>Apache 2.0</license>
 
