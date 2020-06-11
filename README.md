@@ -11,7 +11,7 @@ This package handles low-level communication between ROS and robotont hardware.
 
 ### 2. Moving the robot using teleop twist keyboard
 * Open a new terminal window: <br/>
-```rosrun teleop_twist_keyboard teleop_twist_keyboard.py```
+```rosrun teleop_twist_keyboard teleop_twist_keyboard.py __ns:=robotont```
 * If teleop twist keyboard is not installed:<br/>
 ```sudo apt-get install ros-melodic-teleop-twist-keyboard```
 
