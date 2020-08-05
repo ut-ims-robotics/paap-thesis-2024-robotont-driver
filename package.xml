@@ -4,7 +4,7 @@
   <version>0.0.1</version>
   <description>The robotont_driver package</description>
 
-  <author>Raid Vellering</author>
+  <author>Raid Vellerind</author>
   <author>Martin Maidla</author>
   <author>Madis Kaspar Nigol</author>
   <author>Veiko Vunder</author>
@@ -32,6 +32,7 @@
 
   <run_depend>roscpp</run_depend>
   <run_depend>rospy</run_depend>
+  <run_depend>robotont_description</run_depend>
   <run_depend>robotont_msgs</run_depend>
   <run_depend>std_msgs</run_depend>
   <run_depend>sensor_msgs</run_depend>
