@@ -71,7 +71,7 @@ ifconfig
 ```bash
 http://IP_address:11311
 ```
-* Click on "Show advanced options" in the prompted window and fill in "Joystick" and "Odometry" topic names with "cmd\_vel" and "odom", respectively.
+* Click on "Show advanced options" in the prompted window and fill in "Joystick" and "Odometry" topic names with "/robotont/cmd\_vel" and "/robotont/odom", respectively.
 * Click OK to add the robot.
 * Now you can select the robot from the list and teleoperate it using the touch joystick button.
 
