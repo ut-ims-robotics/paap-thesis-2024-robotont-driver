@@ -3,6 +3,9 @@ ROS driver package for robotont.
 
 This package handles low-level communication between ROS and robotont hardware.
 
+[![Build Status](https://travis-ci.org/robotont/robotont_driver.svg?branch=melodic-devel)](https://travis-ci.org/robotont/robotont_driver)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
 ## 1. Starting the driver
 ### Real robot
 On a real robot, the driver is started automatically via a system service. You can perform several checks to verify that the driver is running properly.
@@ -36,15 +39,25 @@ For a more physics-based experience, the real robot can be replaced with a Gazeb
 
 
 ## 2. Moving the robot using a keyboard
-* Open a new terminal window:
+The drivers for the simulated and for the real robot are both subscribing to a `/robotont/cmd_vel` topic, where the prefix `/robotont` specifies the namespace. To move the robot we have publish velocity messages to this exact topic with a correct namespace prefix.
+
+Here we use teleop\_twist\_keyboard node which translates command line keypresses to velocity messages and published these by default on `cmd_vel` topic. Two different ways for remapping the messages to the correct namespace are:
+1. Run the node in the robotont namespace with a special argument `__ns` (preferred):
 ```bash
 rosrun teleop_twist_keyboard teleop_twist_keyboard.py __ns:=robotont
 ```
-*The argument '__ns:=robotont' runs this node under the '/robotont' namespace. This is needed to set the node publishing on the '/robotont/cmd_vel' topic and not on the '/cmd_vel' topic.*
+
+2. Use topic remapping from the command line:
+```bash
+rosrun teleop_twist_keyboard teleop_twist_keyboard.py cmd_vel:=/robotont/cmd_vel
+```
+
 * If teleop twist keyboard is not installed:
 ```bash
 sudo apt-get install ros-melodic-teleop-twist-keyboard
 ```
+
+* Follow the printout in the console to learn how to control the robot. Enjoy the ride!
 
 ### 3. Moving the robot using an Android device
 * Find out your computer's IP address:
