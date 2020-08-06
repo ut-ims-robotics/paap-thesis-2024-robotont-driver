@@ -39,9 +39,9 @@ For a more physics-based experience, the real robot can be replaced with a Gazeb
 
 
 ## 2. Moving the robot using a keyboard
-The drivers for the simulated and for the real robot are both subscribing to a `/robotont/cmd_vel` topic, where the prefix `/robotont` specifies the namespace. To move the robot we have publish velocity messages to this exact topic with a correct namespace prefix.
+The drivers for the simulated and the real robot both subscribe to a `/robotont/cmd_vel` topic, where the prefix `/robotont` specifies the namespace. To move the robot, we have publish velocity messages to this exact topic with a correct namespace prefix.
 
-Here we use teleop\_twist\_keyboard node which translates command line keypresses to velocity messages and published these by default on `cmd_vel` topic. Two different ways for remapping the messages to the correct namespace are:
+Here we use the teleop\_twist\_keyboard node, which translates command line keypresses to velocity messages and published these by default on `cmd_vel` topic. We can change the topic by using either of the following two approaches:
 1. Run the node in the robotont namespace with a special argument `__ns` (preferred):
 ```bash
 rosrun teleop_twist_keyboard teleop_twist_keyboard.py __ns:=robotont
