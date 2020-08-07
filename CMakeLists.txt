@@ -2,9 +2,6 @@ cmake_minimum_required(VERSION 2.8.3)
 project(robotont_driver)
 add_compile_options(-std=c++11)
 
-# Setup Eigen3 variables
-find_package(Eigen3 REQUIRED)
-
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
@@ -27,7 +24,6 @@ catkin_package(
     robotont_msgs
     tf
     serial
-    DEPENDS EIGEN3
 )
 
 include_directories(
@@ -54,3 +50,16 @@ target_link_libraries(fake_driver_node ${catkin_LIBRARIES})
 target_link_libraries(driver_node ${catkin_LIBRARIES})
 target_link_libraries(gazebo_driver_node ${catkin_LIBRARIES})
 target_link_libraries(gazebo_odom_node ${catkin_LIBRARIES})
+
+
+install(TARGETS driver_node gazebo_driver_node gazebo_odom_node fake_driver_node 
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+  )
+
+install(DIRECTORY include/${PROJECT_NAME}/
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+  )
+
+install(DIRECTORY config launch DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
