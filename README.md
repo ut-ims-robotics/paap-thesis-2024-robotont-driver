@@ -31,7 +31,6 @@ In case you don't have a real robot nearby, you can run this simple dummy node t
 ```bash
 roslaunch robotont_driver fake_driver.launch
 ```
-*Make sure that the fixed frame is set to "odom"!*
 
 ### Gazebo simulation
 
@@ -39,7 +38,7 @@ For a more physics-based experience, the real robot can be replaced with a Gazeb
 
 
 ## 2. Moving the robot using a keyboard
-The drivers for the simulated and the real robot both subscribe to a `/robotont/cmd_vel` topic, where the prefix `/robotont` specifies the namespace. To move the robot, we have publish velocity messages to this exact topic with a correct namespace prefix.
+The drivers for the simulated and the real robot both subscribe to a `/robotont/cmd_vel` topic, where the prefix `/robotont` specifies the namespace. To move the robot, we have to publish velocity messages to this exact topic with a correct namespace prefix.
 
 Here we use the teleop\_twist\_keyboard node, which translates command line keypresses to velocity messages and published these by default on `cmd_vel` topic. We can change the topic by using either of the following two approaches:
 1. Run the node in the robotont namespace with a special argument `__ns` (preferred):
@@ -96,13 +95,13 @@ This plugin receives the ODOM packet from the robot and publishes the data on /o
 
 #### plugin\_power\_supply
 
-This plugin is responsible for publishing information about battery levels, current consumption, and other hardware status indicators.
+This plugin is responsible for publishing information about battery levels, current consumption, and other hardware status indicators. The messages are published on /robotont/power\_supply (<robotont_msgs::PowerSupply>) topic.
 
 
 #### plugin\_range
 
-A plugin for ToF range sensor addon. Publishes Range messages.
+A plugin for ToF range sensor addon. Publishes messages on /robotont/range (<sensor_msgs::Range>) topic.
 
 #### plugin\_led
 
-A plugin for controlling the led strip addon. 
+A plugin for controlling the led strip addon. The plugin subscribes to /robotont/led\_pixel (<robotont_msgs::LedModulePixel>) and /robotont/led\_segment (<robotont_msgs::LedModuleSegment>) topics, which can be used to set the color of an individual pixel or a segment of pixels.
