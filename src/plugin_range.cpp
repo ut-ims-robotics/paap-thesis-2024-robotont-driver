@@ -8,7 +8,7 @@ PluginRange::PluginRange(RobotontHWPtr hw_ptr, const std::string& name) : Plugin
   nh_.param("range/sensor_frame_prefix", sensor_frame_prefix_, std::string("range_sensor_"));
 
   // Set some non changing fields in the TF and range messages
-  range_transform_.header.frame_id = "base_footprint";
+  range_transform_.header.frame_id = "base_link";
 
   range_msg_.radiation_type = sensor_msgs::Range::INFRARED;
   range_msg_.field_of_view = 25.0 / 180 * M_PI;
