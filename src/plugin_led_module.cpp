@@ -32,7 +32,7 @@ void PluginLedModule::writePixel(unsigned int idx, uint8_t r, uint8_t g, uint8_t
 void PluginLedModule::writeSegment(const robotont_msgs::LedModuleSegment& led_seg_msg)
 {
   RobotontPacket packet;
-  packet.push_back("LED_SEG");
+  packet.push_back("LED");
   packet.push_back(std::to_string(led_seg_msg.idx_start));
   for (auto& color : led_seg_msg.colors)
   {
