@@ -24,7 +24,7 @@ namespace robotont
     {
       if (plugin)
       {
-        ROS_DEBUG("Initializing plugin: '%s'.", plugin->getName().c_str());
+        ROS_INFO("Initializing plugin: '%s'.", plugin->getName().c_str());
         plugin->initialize();
       }
     }
@@ -46,6 +46,10 @@ namespace robotont
       // Check if a packet is arrived from the robot
       if(hw_ptr_->readPacket(packet))
       {
+        for (auto arg : packet)
+        {
+          ROS_DEBUG_STREAM(arg);
+        }
         // We have received the complete packet
         // Process the packet in each loaded plugin
         for (auto& plugin : plugins_)
