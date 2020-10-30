@@ -2,7 +2,7 @@
 
 namespace robotont
 {
-PluginLedModule::PluginLedModule(RobotontHWPtr hw_ptr, const std::string& name) : PluginBase(hw_ptr, name)
+PluginLedModule::PluginLedModule(HardwarePtr hw_ptr, const std::string& name) : PluginBase(hw_ptr, name)
 {
   // Subscribe to led topic
   led_px_sub_ = nh_.subscribe("led_pixel", 1, &PluginLedModule::pixel_callback, this);
@@ -32,7 +32,7 @@ void PluginLedModule::writePixel(unsigned int idx, uint8_t r, uint8_t g, uint8_t
 void PluginLedModule::writeSegment(const robotont_msgs::LedModuleSegment& led_seg_msg)
 {
   RobotontPacket packet;
-  packet.push_back("LED_SEG");
+  packet.push_back("LED");
   packet.push_back(std::to_string(led_seg_msg.idx_start));
   for (auto& color : led_seg_msg.colors)
   {

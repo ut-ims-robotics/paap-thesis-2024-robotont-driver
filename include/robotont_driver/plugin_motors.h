@@ -14,7 +14,7 @@ namespace robotont
 class PluginMotors : public PluginBase
 {
 public:
-  PluginMotors(RobotontHWPtr hw_ptr, const std::string& name);
+  PluginMotors(HardwarePtr hw_ptr, const std::string& name);
   ~PluginMotors();
 
 private:

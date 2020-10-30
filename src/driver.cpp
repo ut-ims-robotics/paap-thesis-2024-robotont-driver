@@ -1,4 +1,4 @@
-#include "robotont_driver/robotont_driver.h"
+#include "robotont_driver/driver.h"
 #include "robotont_driver/plugin_motors.h"
 #include "robotont_driver/plugin_odom.h"
 #include "robotont_driver/plugin_power_supply.h"
@@ -7,12 +7,12 @@
 
 namespace robotont
 {
-  RobotontDriver::RobotontDriver()
+  Driver::Driver()
   {
     // Create a hardware instance
-    hw_ptr_ = std::make_shared<RobotontHW>();
+    hw_ptr_ = std::make_shared<Hardware>();
 
-    // initialize builtin plugins
+    // Initialize builtin plugins
     plugins_.emplace_back(std::make_shared<PluginMotors>(hw_ptr_, "Motors"));
     plugins_.emplace_back(std::make_shared<PluginOdom>(hw_ptr_, "Odometry"));
     plugins_.emplace_back(std::make_shared<PluginPowerSupply>(hw_ptr_, "PowerSupply"));
@@ -24,20 +24,20 @@ namespace robotont
     {
       if (plugin)
       {
-        ROS_DEBUG("Initializing plugin: '%s'.", plugin->getName().c_str());
+        ROS_INFO("Initializing plugin: '%s'.", plugin->getName().c_str());
         plugin->initialize();
       }
     }
 
     // Create a timer to periodically read data from the robot
-    timer_ = nh_.createTimer(ros::Duration(0.01), &RobotontDriver::update, this);
+    timer_ = nh_.createTimer(ros::Duration(0.01), &Driver::update, this);
   }
 
-  RobotontDriver::~RobotontDriver()
+  Driver::~Driver()
   {
   }
 
-  void RobotontDriver::update(const ros::TimerEvent& event)
+  void Driver::update(const ros::TimerEvent& event)
   {
     // Poll serial
     RobotontPacket packet;
@@ -46,6 +46,10 @@ namespace robotont
       // Check if a packet is arrived from the robot
       if(hw_ptr_->readPacket(packet))
       {
+        for (auto arg : packet)
+        {
+          ROS_DEBUG_STREAM(arg);
+        }
         // We have received the complete packet
         // Process the packet in each loaded plugin
         for (auto& plugin : plugins_)

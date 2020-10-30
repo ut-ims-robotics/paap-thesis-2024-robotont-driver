@@ -15,7 +15,7 @@ namespace robotont
 class PluginLedModule : public PluginBase
 {
 public:
-  PluginLedModule(RobotontHWPtr hw_ptr, const std::string& name);
+  PluginLedModule(HardwarePtr hw_ptr, const std::string& name);
   ~PluginLedModule();
 
 private:

@@ -14,7 +14,7 @@ namespace robotont
 class PluginPowerSupply : public PluginBase
 {
 public:
-  PluginPowerSupply(RobotontHWPtr hw_ptr, const std::string& name);
+  PluginPowerSupply(HardwarePtr hw_ptr, const std::string& name);
   ~PluginPowerSupply();
 
   /**

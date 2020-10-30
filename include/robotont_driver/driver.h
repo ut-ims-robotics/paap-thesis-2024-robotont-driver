@@ -1,24 +1,24 @@
-#ifndef ROBOTONT_DRIVER_
-#define ROBOTONT_DRIVER_
+#ifndef DRIVER_
+#define DRIVER_
 
 #include <ros/ros.h>
 
-#include "robotont_driver/robotont_hardware.h"
+#include "robotont_driver/hardware.h"
 #include "robotont_driver/plugin_base.h"
 
 namespace robotont
 {
-class RobotontDriver
+class Driver
 {
 public:
-  RobotontDriver();
-  ~RobotontDriver();
+  Driver();
+  ~Driver();
 
 private:
   void update(const ros::TimerEvent& event);
 
   ros::NodeHandle nh_;
-  RobotontHWPtr hw_ptr_;
+  HardwarePtr hw_ptr_;
   std::vector<PluginBasePtr> plugins_;
   ros::Timer timer_;
 };

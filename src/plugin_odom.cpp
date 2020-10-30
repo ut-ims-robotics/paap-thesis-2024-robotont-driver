@@ -2,7 +2,7 @@
 
 namespace robotont
 {
-PluginOdom::PluginOdom(RobotontHWPtr hw_ptr, const std::string& name) : PluginBase(hw_ptr, name)
+PluginOdom::PluginOdom(HardwarePtr hw_ptr, const std::string& name) : PluginBase(hw_ptr, name)
 {
   // Get frame names from parameter server
   std::string odom_frame;

@@ -1,5 +1,5 @@
-#ifndef ROBOTONT_HARDWARE_
-#define ROBOTONT_HARDWARE_
+#ifndef HARDWARE_
+#define HARDWARE_
 
 #include <ros/ros.h>
 #include <serial/serial.h>
@@ -12,11 +12,11 @@ namespace robotont
 {
 typedef std::vector<std::string> RobotontPacket;
 
-class RobotontHW
+class Hardware
 {
 public:
-  RobotontHW();
-  ~RobotontHW();
+  Hardware();
+  ~Hardware();
 
   /**
    * \brief Reads the packet from the robot
@@ -39,7 +39,7 @@ private:
   bool reconnect_requested_;
 };
 
-typedef std::shared_ptr<RobotontHW> RobotontHWPtr;
+typedef std::shared_ptr<Hardware> HardwarePtr;
 }  // namespace robotont
 
 #endif

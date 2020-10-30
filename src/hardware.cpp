@@ -1,8 +1,8 @@
-#include "robotont_driver/robotont_hardware.h"
+#include "robotont_driver/hardware.h"
 
 namespace robotont
 {
-RobotontHW::RobotontHW() : reconnect_requested_(false)
+Hardware::Hardware() : reconnect_requested_(false)
 {
   ROS_DEBUG("Loading hardware communication class ...");
 
@@ -13,7 +13,7 @@ RobotontHW::RobotontHW() : reconnect_requested_(false)
   nh_.param("serial/port", robotont_port, std::string("/dev/ttyACM0"));
   nh_.param("serial/baudrate", robotont_baudrate, 115200);
 
-  // configure serial
+  // Configure serial
   serial_.setPort(robotont_port);
   serial_.setBaudrate(robotont_baudrate);
   serial::Timeout timeout = serial::Timeout::simpleTimeout(1000);
@@ -22,10 +22,10 @@ RobotontHW::RobotontHW() : reconnect_requested_(false)
   connect();
   
   // Set up a timer to reconnect whenever the connection to hardware should drop
-  timer_ = nh_.createTimer(ros::Duration(.5), &RobotontHW::checkConnection, this);
+  timer_ = nh_.createTimer(ros::Duration(.5), &Hardware::checkConnection, this);
 }
 
-RobotontHW::~RobotontHW()
+Hardware::~Hardware()
 {
   // Send ESC key to stop the motors on exit
   RobotontPacket packet;
@@ -33,7 +33,7 @@ RobotontHW::~RobotontHW()
   writePacket(packet);
 }
 
-void RobotontHW::connect()
+void Hardware::connect()
 {
   if (serial_.isOpen())
   {
@@ -61,7 +61,7 @@ void RobotontHW::connect()
   }
 }
 
-void RobotontHW::checkConnection(const ros::TimerEvent& event)
+void Hardware::checkConnection(const ros::TimerEvent& event)
 {
   if (!serial_.isOpen() || reconnect_requested_)
   {
@@ -69,7 +69,7 @@ void RobotontHW::checkConnection(const ros::TimerEvent& event)
   }
 }
 
-bool RobotontHW::readPacket(RobotontPacket& packet)
+bool Hardware::readPacket(RobotontPacket& packet)
 {
   // Collect all bytes from the serial buffer.
   try
@@ -140,7 +140,7 @@ bool RobotontHW::readPacket(RobotontPacket& packet)
   return false;
 }
 
-void RobotontHW::writePacket(const RobotontPacket& packet)
+void Hardware::writePacket(const RobotontPacket& packet)
 {
   if (packet.empty())
   {
