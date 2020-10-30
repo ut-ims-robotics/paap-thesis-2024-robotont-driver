@@ -2,22 +2,22 @@
 #define PLUGIN_BASE_
 
 #include <ros/ros.h>
-#include <robotont_driver/robotont_hardware.h>
+#include <robotont_driver/hardware.h>
 
 namespace robotont
 {
 class PluginBase
 {
 public:
-  PluginBase(RobotontHWPtr hw_ptr, const std::string& name);
+  PluginBase(HardwarePtr hw_ptr, const std::string& name);
   virtual ~PluginBase();
 
-  virtual void initialize(); // TODO: should this method be pure virtual?
-  virtual void packetReceived(const RobotontPacket& packet); // TODO: should this method be pure virtual?
+  virtual void initialize();
+  virtual void packetReceived(const RobotontPacket& packet);
   virtual const std::string& getName() const;
 
 protected:
-  RobotontHWPtr hw_ptr_;
+  HardwarePtr hw_ptr_;
   std::string name_;
   ros::NodeHandle nh_;
 };

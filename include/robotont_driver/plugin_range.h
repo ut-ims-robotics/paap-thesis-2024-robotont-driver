@@ -16,7 +16,7 @@ namespace robotont
 class PluginRange : public PluginBase
 {
 public:
-  PluginRange(RobotontHWPtr hw_ptr, const std::string& name);
+  PluginRange(HardwarePtr hw_ptr, const std::string& name);
   ~PluginRange();
   void packetReceived(const RobotontPacket& packet);
 

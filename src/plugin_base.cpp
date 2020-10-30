@@ -2,7 +2,7 @@
 
 namespace robotont
 {
-PluginBase::PluginBase(RobotontHWPtr hw_ptr, const std::string& name) : hw_ptr_(hw_ptr), name_(name)
+PluginBase::PluginBase(HardwarePtr hw_ptr, const std::string& name) : hw_ptr_(hw_ptr), name_(name)
 {
 }
 

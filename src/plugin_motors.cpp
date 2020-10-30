@@ -2,7 +2,7 @@
 
 namespace robotont
 {
-PluginMotors::PluginMotors(RobotontHWPtr hw_ptr, const std::string& name) : PluginBase(hw_ptr, name)
+PluginMotors::PluginMotors(HardwarePtr hw_ptr, const std::string& name) : PluginBase(hw_ptr, name)
 {
   // Subscribe to command velocity topic
   cmd_vel_sub_ = nh_.subscribe("cmd_vel", 1, &PluginMotors::cmd_vel_callback, this);

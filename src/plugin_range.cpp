@@ -2,7 +2,7 @@
 
 namespace robotont
 {
-PluginRange::PluginRange(RobotontHWPtr hw_ptr, const std::string& name) : PluginBase(hw_ptr, name)
+PluginRange::PluginRange(HardwarePtr hw_ptr, const std::string& name) : PluginBase(hw_ptr, name)
 {
   // Get frame names from parameter server
   nh_.param("range/sensor_frame_prefix", sensor_frame_prefix_, std::string("range_sensor_"));

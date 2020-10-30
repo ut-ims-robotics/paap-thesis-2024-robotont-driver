@@ -2,7 +2,7 @@
 
 namespace robotont
 {
-PluginPowerSupply::PluginPowerSupply(RobotontHWPtr hw_ptr, const std::string& name)
+PluginPowerSupply::PluginPowerSupply(HardwarePtr hw_ptr, const std::string& name)
 : PluginBase(hw_ptr, name)
 {
   // Set up the power info publisher

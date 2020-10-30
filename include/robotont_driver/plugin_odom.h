@@ -15,7 +15,7 @@ namespace robotont
 class PluginOdom : public PluginBase
 {
 public:
-  PluginOdom(RobotontHWPtr hw_ptr, const std::string& name);
+  PluginOdom(HardwarePtr hw_ptr, const std::string& name);
   ~PluginOdom();
 
   void packetReceived(const RobotontPacket& packet);

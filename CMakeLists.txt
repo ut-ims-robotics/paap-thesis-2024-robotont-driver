@@ -33,8 +33,8 @@ include_directories(
 
 add_executable(driver_node 
   src/driver_node.cpp
-  src/robotont_driver.cpp
-  src/robotont_hardware.cpp 
+  src/driver.cpp
+  src/hardware.cpp 
   src/plugin_base.cpp 
   src/plugin_motors.cpp 
   src/plugin_odom.cpp

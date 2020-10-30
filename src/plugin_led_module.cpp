@@ -2,7 +2,7 @@
 
 namespace robotont
 {
-PluginLedModule::PluginLedModule(RobotontHWPtr hw_ptr, const std::string& name) : PluginBase(hw_ptr, name)
+PluginLedModule::PluginLedModule(HardwarePtr hw_ptr, const std::string& name) : PluginBase(hw_ptr, name)
 {
   // Subscribe to led topic
   led_px_sub_ = nh_.subscribe("led_pixel", 1, &PluginLedModule::pixel_callback, this);
