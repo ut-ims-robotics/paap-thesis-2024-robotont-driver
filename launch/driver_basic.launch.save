@@ -1,0 +1,8 @@
+<?xml version="1.0" ?>
+<launch>
+  <arg name="__ns" default=""/>
+  <arg name="prefix" default="$(arg __ns)_"/>
+  <rosparam file="$(find robotont_driver)/config/robotont_params.yaml" command="load" />
+  <node pkg="robotont_driver" name="$(anon driver_node)" type="driver_node" output="screen"/>
+
+</launch>
