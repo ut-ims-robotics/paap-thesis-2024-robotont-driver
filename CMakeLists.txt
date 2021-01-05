@@ -11,7 +11,6 @@ find_package(catkin REQUIRED COMPONENTS
   nav_msgs
   robotont_msgs
   tf
-  cmake_modules
   serial
 )
 
