@@ -17,6 +17,8 @@ env:
   global: # global settings for all jobs
     - ROS_REPO=ros
     - UPSTREAM_WORKSPACE=".travis.rosinstall"
+    - NOT_TEST_BUILD=true
+    - DEBUG_BASH=true
     - CCACHE_DIR=$HOME/.ccache # enables C/C++ caching in industrial_ci
   matrix:
     - ROS_DISTRO="kinetic" 
