@@ -15,7 +15,7 @@ To check the status of the service:
 systemctl status clearbot.service
 ```
 
-If the driver node is running you should also see '/robotont/driver\_node' in the output of:
+If the driver node is running you should also see '/driver\_node' in the output of:
 ```bash
 rosnode list
 ```
@@ -38,17 +38,12 @@ For a more physics-based experience, the real robot can be replaced with a Gazeb
 
 
 ## 2. Moving the robot using a keyboard
-The drivers for the simulated and the real robot both subscribe to a `/robotont/cmd_vel` topic, where the prefix `/robotont` specifies the namespace. To move the robot, we have to publish velocity messages to this exact topic with a correct namespace prefix.
+The drivers for the simulated and the real robot both subscribe to a `cmd_vel` topic. To move the robot, we have to publish velocity messages to this exact topic.
 
-Here we use the teleop\_twist\_keyboard node, which translates command line keypresses to velocity messages and published these by default on `cmd_vel` topic. We can change the topic by using either of the following two approaches:
-1. Run the node in the robotont namespace with a special argument `__ns` (preferred):
+Here we use the teleop\_twist\_keyboard node, which translates command line keypresses to velocity messages and published these by default on `cmd_vel` topic.
+Run the node
 ```bash
-rosrun teleop_twist_keyboard teleop_twist_keyboard.py __ns:=robotont
-```
-
-2. Use topic remapping from the command line:
-```bash
-rosrun teleop_twist_keyboard teleop_twist_keyboard.py cmd_vel:=/robotont/cmd_vel
+rosrun teleop_twist_keyboard teleop_twist_keyboard.py
 ```
 
 * If teleop twist keyboard is not installed:
@@ -105,3 +100,4 @@ A plugin for ToF range sensor addon. Publishes messages on /robotont/range (<sen
 #### plugin\_led
 
 A plugin for controlling the led strip addon. The plugin subscribes to /robotont/led\_pixel (<robotont_msgs::LedModulePixel>) and /robotont/led\_segment (<robotont_msgs::LedModuleSegment>) topics, which can be used to set the color of an individual pixel or a segment of pixels.
+
