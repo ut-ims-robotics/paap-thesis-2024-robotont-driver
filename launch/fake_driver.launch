@@ -1,7 +1,13 @@
 <?xml version="1.0" ?>
 <launch>
+  <arg name="__ns" default=""/>
+  <arg name="prefix" default="$(arg __ns)_"/>
   <include file="$(find robotont_description)/launch/display_simulated_robot.launch">
-    <arg name="fixed_frame" value="odom" />
+    <arg name="rviz_fixed_frame" value="odom" />
+    <arg name="__ns" value="$(arg __ns)"/>
   </include>
-  <node ns="robotont" name="fake_driver_node" pkg="robotont_driver" type="fake_driver_node" output="screen"/>    
+  <node name="fake_driver_node" pkg="robotont_driver" type="fake_driver_node" output="screen">
+    <param unless="$(eval prefix == '_')" name="odom_frame" value="$(arg prefix)odom"/>
+    <param unless="$(eval prefix == '_')" name="base_frame" value="$(arg prefix)base_footprint"/>
+  </node>    
 </launch>
