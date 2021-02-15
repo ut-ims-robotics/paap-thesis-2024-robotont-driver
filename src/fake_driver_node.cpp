@@ -35,23 +35,26 @@ int main(int argc, char **argv)
     ros::Time current_time, last_time;
     current_time = ros::Time::now();
     last_time = ros::Time::now();
-
     ros::Rate r(100);
     while (n.ok())
     {
         ros::spinOnce(); // check for incoming messages
         current_time = ros::Time::now();
+        if (current_time - receive_time > ros::Duration(0.5))
+        {
+            vx = 0.0;
+            vy = 0.0;
+            vth = 0.0;
+        }
         //compute odometry in a typical way given the velocities of the robot
         double dt = (current_time - last_time).toSec();
         double delta_x = (vx * cos(th) - vy * sin(th)) * dt;
         double delta_y = (vx * sin(th) + vy * cos(th)) * dt;
         double delta_th = vth * dt;
-        if (ros::Time::now() - receive_time < ros::Duration(0.01))
-        {
-            x += delta_x;
-            y += delta_y;
-            th += delta_th;
-        }
+
+        x += delta_x;
+        y += delta_y;
+        th += delta_th;
 
         //since all odometry is 6DOF we'll need a quaternion created from yaw
         geometry_msgs::Quaternion odom_quat = tf::createQuaternionMsgFromYaw(th);
