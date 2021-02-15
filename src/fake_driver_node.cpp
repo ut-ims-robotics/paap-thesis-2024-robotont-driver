@@ -6,9 +6,11 @@
 double vx = 0.0;
 double vy = 0.0;
 double vth = 0.0;
+ros::Time receive_time;
 
 void receiveCmd(geometry_msgs::Twist input_velocity)
 {
+    receive_time = ros::Time::now();
     vx = input_velocity.linear.x;
     vy = input_velocity.linear.y;
     vth = input_velocity.angular.z;
@@ -37,7 +39,6 @@ int main(int argc, char **argv)
     ros::Rate r(100);
     while (n.ok())
     {
-
         ros::spinOnce(); // check for incoming messages
         current_time = ros::Time::now();
         //compute odometry in a typical way given the velocities of the robot
@@ -45,10 +46,12 @@ int main(int argc, char **argv)
         double delta_x = (vx * cos(th) - vy * sin(th)) * dt;
         double delta_y = (vx * sin(th) + vy * cos(th)) * dt;
         double delta_th = vth * dt;
-
-        x += delta_x;
-        y += delta_y;
-        th += delta_th;
+        if (ros::Time::now() - receive_time < ros::Duration(0.01))
+        {
+            x += delta_x;
+            y += delta_y;
+            th += delta_th;
+        }
 
         //since all odometry is 6DOF we'll need a quaternion created from yaw
         geometry_msgs::Quaternion odom_quat = tf::createQuaternionMsgFromYaw(th);
