@@ -1,49 +1,25 @@
 <?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="2">
   <name>robotont_driver</name>
-  <version>0.0.1</version>
-  <description>The robotont_driver package</description>
+  <version>0.1.0</version>
+  <description>Hardware driver for the Robotont robot</description>
+  <author email="veiko@robotont.eu">Veiko Vunder</author>
+  <maintainer email="veiko@robotont.eu">Veiko Vunder</maintainer>
+  <license>Apache License 2.0</license>
 
-  <author>Raid Vellerind</author>
-  <author>Martin Maidla</author>
-  <author>Madis Kaspar Nigol</author>
-  <author>Veiko Vunder</author>
+  <buildtool_depend>ament_cmake</buildtool_depend>
 
-  <maintainer email="veiko.vunder@ut.ee">Veiko Vunder</maintainer>
-  <maintainer email="karl.kruusamae@ut.ee">Karl Kruusamäe</maintainer>
-
-  <url type="website">https://wiki.ros.org/robotont</url>
-  <url type="website">http://robotont.ut.ee</url>
-  <url type="repository">http://github.com/robotont/robotont_driver</url>
-
-  <license>Apache 2.0</license>
-
-  <buildtool_depend>catkin</buildtool_depend>
-
-  <build_depend>roscpp</build_depend>
-  <build_depend>rospy</build_depend>
-  <build_depend>std_msgs</build_depend>
-  <build_depend>robotont_msgs</build_depend>
-  <build_depend>sensor_msgs</build_depend>
+  <build_depend>rclcpp</build_depend>
   <build_depend>geometry_msgs</build_depend>
-  <build_depend>nav_msgs</build_depend>
-  <build_depend>tf</build_depend>
   <build_depend>serial</build_depend>
 
-  <exec_depend>roscpp</exec_depend>
-  <exec_depend>rospy</exec_depend>
-  <exec_depend>robotont_description</exec_depend>
-  <exec_depend>robotont_msgs</exec_depend>
-  <exec_depend>std_msgs</exec_depend>
-  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>rclcpp</exec_depend>
   <exec_depend>geometry_msgs</exec_depend>
-  <exec_depend>nav_msgs</exec_depend>
-  <exec_depend>tf</exec_depend>
   <exec_depend>serial</exec_depend>
 
   <export>
-    <!-- Other tools can request additional information be placed here -->
-
+    <build_type>ament_cmake</build_type>
   </export>
-
 </package>
+
