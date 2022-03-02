@@ -38,19 +38,25 @@ void RobotontDriver::read()
     RCLCPP_INFO(this->get_logger(), "Hello from read()");
 }
 
+RobotontDriver::~RobotontDriver()
+{
+  RCLCPP_INFO(this->get_logger(), "Robotont driver is shutting down...");
+}
+
 }  // namespace serial_driver
 }  // namespace drivers
 
 int main(int argc, char **argv)
 {
+     /*
     rclcpp::init(argc, argv);
     auto node = std::make_shared<drivers::serial_driver::RobotontDriver>();
     rclcpp::spin(node);
     rclcpp::shutdown();
     return 0;
-    
+    */
 
-    /*// Initialise ROS2
+    // Initialise ROS2
     rclcpp::init(argc, argv);
 
     // Create a single threaded executor
@@ -69,5 +75,5 @@ int main(int argc, char **argv)
     // Do a nice shut down for ROS2
     rclcpp::shutdown();
     return 0;
-    */
+    
 }

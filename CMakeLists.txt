@@ -11,12 +11,13 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 include_directories(include)
-include_directories(src)
+#include_directories(include/io_context)
+#include_directories(include/msg_converters)
+#include_directories(include/serial_driver)
 
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
-find_package(io_context REQUIRED)
-find_package(robotont_driver REQUIRED)
+#find_package(io_context REQUIRED)
 #find_package(serial_driver REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
@@ -26,8 +27,24 @@ find_package(tf2_geometry_msgs REQUIRED)
 #add_executable(robotont_driver src/robotont_driver.cpp src/odom.cpp)
 #ament_target_dependencies(robotont_driver rclcpp serial geometry_msgs nav_msgs tf2_ros tf2_geometry_msgs)
 
+find_package(ament_cmake_auto REQUIRED)
+ament_auto_find_build_dependencies()
+
+find_package(asio_cmake_module REQUIRED)
+find_package(ASIO REQUIRED)
+
+ament_auto_add_library(${PROJECT_NAME} SHARED
+  src/serial_port.cpp
+  src/serial_driver.cpp
+  src/sven_driver.cpp
+  src/io_context.cpp
+  src/odom.cpp
+)
+
+ament_target_dependencies(${PROJECT_NAME} "ASIO")
+
 add_executable(sven_driver src/sven_driver.cpp src/odom.cpp)
-ament_target_dependencies(sven_driver rclcpp io_context robotont_driver geometry_msgs nav_msgs tf2_ros tf2_geometry_msgs)
+ament_target_dependencies(sven_driver rclcpp geometry_msgs nav_msgs tf2_ros tf2_geometry_msgs)
 
 
 #add_executable(publisher_member_function member_function.cpp)

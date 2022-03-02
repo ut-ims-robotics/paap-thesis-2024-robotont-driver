@@ -1,5 +1,5 @@
-#ifndef SERIAL_DRIVER__SERIAL_BRIDGE_NODE_HPP_
-#define SERIAL_DRIVER__SERIAL_BRIDGE_NODE_HPP_
+#ifndef ROBOTONT_DRIVER__SVEN_DRIVER_HPP_
+#define ROBOTONT_DRIVER__SVEN_DRIVER_HPP_
 
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_lifecycle/lifecycle_node.hpp>
@@ -29,11 +29,6 @@ class RobotontDriver : public rclcpp::Node
 {
 public:
   RobotontDriver();
-
-  /// \brief Default constructor
-  /// \param[in] options Options for the node
-  //explicit RobotontDriver(const rclcpp::NodeOptions & options);
-
   void initialize();
   ~RobotontDriver();
 
@@ -51,10 +46,6 @@ private:
 //  void writeMotorSpeed(float speed_m1, float speed_m2, float speed_m3);
   //void cmd_vel_callback(const geometry_msgs::msg::Twist::SharedPtr cmd_vel_msg);
 
-
-
-
-
   void get_params();
 
   std::unique_ptr<drivers::common::IoContext> m_owned_ctx{};
@@ -63,9 +54,6 @@ private:
   std::unique_ptr<drivers::serial_driver::SerialDriver> m_serial_driver;
   //lc::LifecyclePublisher<UInt8MultiArray>::SharedPtr m_publisher;
   rclcpp::Subscription<UInt8MultiArray>::SharedPtr m_subscriber;
-
-
-
 
 
   std::unique_ptr<Odom> odom_;
