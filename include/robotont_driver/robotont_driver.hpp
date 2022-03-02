@@ -1,8 +1,9 @@
+/* 
 #ifndef ROBOTONT_DRIVER_HPP
 #define ROBOTONT_DRIVER_HPP
 
 #include <rclcpp/rclcpp.hpp>
-#include <serial/serial.h>
+//#include <serial/serial.h>
 #include "geometry_msgs/msg/twist.hpp"
 #include "robotont_driver/odom.hpp"
 
@@ -19,7 +20,7 @@ private:
   /**
    * \brief Open serial connection to the robot
    * This function blocks execution until the connection is established or the node is terminated
-   */
+   
   void connect();
   void read();
   void processPacket();
@@ -35,5 +36,6 @@ private:
   rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_sub_;
 };
 //}
-
 #endif
+*/
+
