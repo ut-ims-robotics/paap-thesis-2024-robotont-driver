@@ -1,0 +1,9 @@
+# pack-refs with: peeled fully-peeled sorted 
+8d0d58a9e359503b43ab4b1f51a8a55ba3ea95d7 refs/remotes/origin/melodic-devel
+f12a9c701ba53c15df6031dc9e8c08705deca484 refs/remotes/origin/melodic-devel-ns-slash
+c914002a72a44e51230fe6949e177b7a78b69526 refs/remotes/origin/melodic-devel-ranno
+653fc8cc85520e6e13a7136cbd15fe746ca738cd refs/remotes/origin/melodic-devel-rvalner
+5489e5798f0bc28f3e2d6b2a5d87e908fd6ab882 refs/remotes/origin/melodic-devel-veiko
+f34455d1487bd9a73ac9d29667e3fd779cb2a146 refs/remotes/origin/noetic-devel
+7a6d1c019b0352b6d6fa64631ae586a63c89e35a refs/remotes/origin/noetic-devel-robert
+0863b5af973d3d8aa6b270217e72d3b6e27b76ca refs/remotes/origin/ros2-foxy-devel

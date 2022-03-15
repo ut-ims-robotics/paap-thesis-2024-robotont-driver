@@ -1,0 +1,11 @@
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = false
+	logallrefupdates = true
+[remote "origin"]
+	url = https://github.com/robotont/robotont_driver.git
+	fetch = +refs/heads/*:refs/remotes/origin/*
+[branch "ros2-foxy-devel"]
+	remote = origin
+	merge = refs/heads/ros2-foxy-devel

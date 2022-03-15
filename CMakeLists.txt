@@ -34,14 +34,17 @@ find_package(ASIO REQUIRED)
 ament_auto_add_library(${PROJECT_NAME} SHARED
   src/serial_port.cpp
   src/serial_driver.cpp
-  src/sven_driver.cpp
   src/io_context.cpp
+  src/driver.cpp
+  src/hardware.cpp
+  src/plugin_base.cpp
+  src/driver_node.cpp
 )
 
 ament_target_dependencies(${PROJECT_NAME} "ASIO")
 
-add_executable(sven_driver src/sven_driver.cpp src/odom.cpp)
-ament_target_dependencies(sven_driver io_context serial_driver rclcpp geometry_msgs nav_msgs tf2_ros tf2_geometry_msgs)
+add_executable(driver_node src/driver.cpp src/hardware.cpp src/driver_node.cpp src/serial_port.cpp)
+ament_target_dependencies(driver_node io_context serial_driver rclcpp geometry_msgs nav_msgs tf2_ros tf2_geometry_msgs)
 
 
 #add_executable(publisher_member_function member_function.cpp)
@@ -51,7 +54,7 @@ ament_target_dependencies(sven_driver io_context serial_driver rclcpp geometry_m
 #ament_target_dependencies(publisher_not_composable rclcpp std_msgs)
 
 install(TARGETS
-  sven_driver
+  driver_node
   DESTINATION lib/${PROJECT_NAME}
 )
   #publisher_member_function

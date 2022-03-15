@@ -64,6 +64,7 @@ void SerialPort::async_send(const std::vector<uint8_t> & buff)
 
 void SerialPort::async_receive(Functor func)
 {
+
   m_func = std::move(func);
   m_serial_port.async_read_some(
     asio::buffer(m_recv_buffer),
@@ -87,7 +88,7 @@ void SerialPort::async_send_handler(
 void SerialPort::async_receive_handler(
   const asio::error_code & error,
   size_t bytes_transferred)
-{
+{  
   if (error) {
     RCLCPP_ERROR_STREAM(rclcpp::get_logger("SerialPort::async_receive_handler"), error.message());
     return;
