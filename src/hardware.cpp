@@ -1,6 +1,8 @@
 #include "robotont_driver/hardware.hpp"
+#include "geometry_msgs/msg/twist.hpp"
 
 #include <rclcpp/logging.hpp>
+#include "rclcpp/rclcpp.hpp"
 
 #include <utility>
 #include <memory>
@@ -10,6 +12,7 @@
 #include <functional>
 
 using namespace std::chrono_literals;
+using std::placeholders::_1;
 
 namespace drivers
 {
@@ -24,9 +27,7 @@ Hardware::Hardware() : Node("hardware_node"),
 
   // Get parameters 
   get_params();
-
-  RCLCPP_INFO(this->get_logger(), "Got params");
-
+  // Initialize
   initialize();
 }
 
@@ -50,22 +51,47 @@ void Hardware::initialize()
       m_device_name.c_str(), ex.what());
   }
 
+  // Create Subscriber
+  //auto qos = rclcpp::QoS(rclcpp::KeepLast(32)).best_effort();
+  //auto callback = std::bind(&Hardware::subscriber_callback, this, std::placeholders::_1);
+  //m_subscriber = this->create_subscription<UInt8MultiArray>("cmd_vel", qos, callback);
+
+  cmd_vel_sub_ = this->create_subscription<geometry_msgs::msg::Twist>("/cmd_vel", 
+    rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(rmw_qos_profile_sensor_data)), 
+    std::bind(&Hardware::cmd_vel_callback, this, std::placeholders::_1));
+
   RCLCPP_INFO(this->get_logger(), "Serial driver is running");
+}
+
+void Hardware::cmd_vel_callback(const geometry_msgs::msg::Twist::SharedPtr cmd_vel_msg)
+{
+  RCLCPP_INFO(this->get_logger(), "got vel cmd");
 }
 
 void Hardware::receive_callback(const std::vector<uint8_t> & buffer, const size_t & bytes_transferred)
 {
   UInt8MultiArray out;
+  UInt8MultiArray out2;
   drivers::common::to_msg(buffer, out, bytes_transferred);
   m_publisher->publish(out);
+  m_publisher->publish(out2);
+}
+
+
+void Hardware::subscriber_callback(const UInt8MultiArray::SharedPtr msg)
+{
+  RCLCPP_INFO(this->get_logger(), "Subscriber_callback");
+
+  /*
+  std::vector<uint8_t> out;
+  drivers::common::from_msg(msg, out);
+  m_serial_driver->port()->async_send(out);
+  RCLCPP_INFO(this->get_logger(), "Sent data %s", out);
+  */
 }
 
 Hardware::~Hardware()
 {
-  // Send ESC key to stop the motors on exit
-  //RobotontPacket packet;
-  //packet.push_back("\x1B");
-  //writePacket(packet);
 }
 
 void Hardware::get_params()
