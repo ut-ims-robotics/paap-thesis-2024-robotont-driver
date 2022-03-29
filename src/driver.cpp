@@ -8,7 +8,7 @@ namespace serial_driver
 {
   Driver::Driver() : Node("driver_node")
   {
-    hw_ptr_ = std::make_shared<Hardware>();
+    hw_ptr_ = std::make_shared<Hardware>(shared_from_this());
   }
 
   Driver::~Driver()

@@ -19,11 +19,12 @@ namespace drivers
 namespace serial_driver
 {
 
-Hardware::Hardware() : Node("hardware_node"),
+Hardware::Hardware(rclcpp::Node::SharedPtr node): 
     m_owned_ctx{new IoContext()},
-    m_serial_driver{new SerialDriver(*m_owned_ctx)}
+    m_serial_driver{new SerialDriver(*m_owned_ctx)},
+    node_(node)
 {
-  RCLCPP_INFO(this->get_logger(), "Robotont driver is starting...");
+  RCLCPP_INFO(node_->get_logger(), "Robotont driver is starting...");
 
   // Get parameters 
   get_params();
@@ -35,7 +36,7 @@ void Hardware::initialize()
 {
 
   // Create Publisher
-  m_publisher = this->create_publisher<UInt8MultiArray>(
+  m_publisher = node_->create_publisher<UInt8MultiArray>(
     "serial_read", rclcpp::QoS{100});
   
   try {
@@ -47,25 +48,25 @@ void Hardware::initialize()
     }
   } catch (const std::exception & ex) {
     RCLCPP_ERROR(
-      get_logger(), "Error creating serial port: %s - %s",
+      node_->get_logger(), "Error creating serial port: %s - %s",
       m_device_name.c_str(), ex.what());
   }
 
   // Create Subscriber
   //auto qos = rclcpp::QoS(rclcpp::KeepLast(32)).best_effort();
   //auto callback = std::bind(&Hardware::subscriber_callback, this, std::placeholders::_1);
-  //m_subscriber = this->create_subscription<UInt8MultiArray>("cmd_vel", qos, callback);
+  //m_subscriber = node_->create_subscription<UInt8MultiArray>("cmd_vel", qos, callback);
 
-  cmd_vel_sub_ = this->create_subscription<geometry_msgs::msg::Twist>("/cmd_vel", 
+  cmd_vel_sub_ = node_->create_subscription<geometry_msgs::msg::Twist>("/cmd_vel", 
     rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(rmw_qos_profile_sensor_data)), 
     std::bind(&Hardware::cmd_vel_callback, this, std::placeholders::_1));
 
-  RCLCPP_INFO(this->get_logger(), "Serial driver is running");
+  RCLCPP_INFO(node_->get_logger(), "Serial driver is running");
 }
 
 void Hardware::cmd_vel_callback(const geometry_msgs::msg::Twist::SharedPtr cmd_vel_msg)
 {
-  RCLCPP_INFO(this->get_logger(), "got vel cmd");
+  RCLCPP_INFO(node_->get_logger(), "got vel cmd");
 }
 
 void Hardware::receive_callback(const std::vector<uint8_t> & buffer, const size_t & bytes_transferred)
@@ -80,13 +81,13 @@ void Hardware::receive_callback(const std::vector<uint8_t> & buffer, const size_
 
 void Hardware::subscriber_callback(const UInt8MultiArray::SharedPtr msg)
 {
-  RCLCPP_INFO(this->get_logger(), "Subscriber_callback");
+  RCLCPP_INFO(node_->get_logger(), "Subscriber_callback");
 
   /*
   std::vector<uint8_t> out;
   drivers::common::from_msg(msg, out);
   m_serial_driver->port()->async_send(out);
-  RCLCPP_INFO(this->get_logger(), "Sent data %s", out);
+  RCLCPP_INFO(node_->get_logger(), "Sent data %s", out);
   */
 }
 
@@ -102,21 +103,21 @@ void Hardware::get_params()
   auto sb = StopBits::ONE;
 
   try {
-    m_device_name = declare_parameter<std::string>("device_name", "/dev/ttyACM1");
+    m_device_name = node_->declare_parameter<std::string>("device_name", "/dev/ttyACM1");
   } catch (rclcpp::ParameterTypeException & ex) {
-    RCLCPP_ERROR(get_logger(), "The device name provided was invalid");
+    RCLCPP_ERROR(node_->get_logger(), "The device name provided was invalid");
     throw ex;
   }
 
   try {
-    baud_rate = declare_parameter<int>("baud_rate", 115200);
+    baud_rate = node_->declare_parameter<int>("baud_rate", 115200);
   } catch (rclcpp::ParameterTypeException & ex) {
-    RCLCPP_ERROR(get_logger(), "The baud_rate provided was invalid");
+    RCLCPP_ERROR(node_->get_logger(), "The baud_rate provided was invalid");
     throw ex;
   }
 
   try {
-    const auto fc_string = declare_parameter<std::string>("flow_control", "none");
+    const auto fc_string = node_->declare_parameter<std::string>("flow_control", "none");
 
     if (fc_string == "none") {
       fc = FlowControl::NONE;
@@ -129,12 +130,12 @@ void Hardware::get_params()
               "The flow_control parameter must be one of: none, software, or hardware."};
     }
   } catch (rclcpp::ParameterTypeException & ex) {
-    RCLCPP_ERROR(get_logger(), "The flow_control provided was invalid");
+    RCLCPP_ERROR(node_->get_logger(), "The flow_control provided was invalid");
     throw ex;
   }
 
   try {
-    const auto pt_string = declare_parameter<std::string>("parity", "none");
+    const auto pt_string = node_->declare_parameter<std::string>("parity", "none");
 
     if (pt_string == "none") {
       pt = Parity::NONE;
@@ -147,12 +148,12 @@ void Hardware::get_params()
               "The parity parameter must be one of: none, odd, or even."};
     }
   } catch (rclcpp::ParameterTypeException & ex) {
-    RCLCPP_ERROR(get_logger(), "The parity provided was invalid");
+    RCLCPP_ERROR(node_->get_logger(), "The parity provided was invalid");
     throw ex;
   }
 
   try {
-    const auto sb_string = declare_parameter<std::string>("stop_bits", "1");
+    const auto sb_string = node_->declare_parameter<std::string>("stop_bits", "1");
 
     if (sb_string == "1" || sb_string == "1.0") {
       sb = StopBits::ONE;
@@ -165,7 +166,7 @@ void Hardware::get_params()
               "The stop_bits parameter must be one of: 1, 1.5, or 2."};
     }
   } catch (rclcpp::ParameterTypeException & ex) {
-    RCLCPP_ERROR(get_logger(), "The stop_bits provided was invalid");
+    RCLCPP_ERROR(node_->get_logger(), "The stop_bits provided was invalid");
     throw ex;
   }
 

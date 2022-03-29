@@ -15,10 +15,10 @@ namespace serial_driver
 {
 typedef std::vector<std::string> RobotontPacket;
 
-class Hardware : public rclcpp::Node
+class Hardware
 {
 public:
-  Hardware();
+  Hardware(rclcpp::Node::SharedPtr node);
   void initialize();
   ~Hardware();
 
@@ -37,6 +37,7 @@ private:
   std::unique_ptr<drivers::serial_driver::SerialDriver> m_serial_driver;
   rclcpp::Publisher<UInt8MultiArray>::SharedPtr m_publisher;
   rclcpp::Subscription<UInt8MultiArray>::SharedPtr m_subscriber;
+  rclcpp::Node::SharedPtr node_;
 
   std::string packet_;
   rclcpp::TimerBase::SharedPtr timer_;
