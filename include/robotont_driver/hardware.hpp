@@ -9,17 +9,15 @@
 
 using std_msgs::msg::UInt8MultiArray;
 
-namespace drivers
-{
-namespace serial_driver
+namespace robotont
 {
 typedef std::vector<std::string> RobotontPacket;
 
+//class Hardware : public rclcpp::Node
 class Hardware
 {
 public:
   Hardware(rclcpp::Node::SharedPtr node);
-  void initialize();
   ~Hardware();
 
   void read();
@@ -47,7 +45,6 @@ private:
 
 typedef std::shared_ptr<Hardware> HardwarePtr;
 
-}  // namespace serial_driver
-}  // namespace drivers
+}  // namespace robotont
 
 #endif

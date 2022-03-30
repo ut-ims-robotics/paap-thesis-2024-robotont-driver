@@ -14,30 +14,18 @@
 using namespace std::chrono_literals;
 using std::placeholders::_1;
 
-namespace drivers
+namespace robotont
 {
-namespace serial_driver
-{
-
+//Hardware::Hardware(rclcpp::Node::SharedPtr node): rclcpp::Node("hardware"),
 Hardware::Hardware(rclcpp::Node::SharedPtr node): 
-    m_owned_ctx{new IoContext()},
-    m_serial_driver{new SerialDriver(*m_owned_ctx)},
+    m_owned_ctx{new drivers::common::IoContext()},
+    m_serial_driver{new drivers::serial_driver::SerialDriver(*m_owned_ctx)},
     node_(node)
 {
   RCLCPP_INFO(node_->get_logger(), "Robotont driver is starting...");
 
   // Get parameters 
   get_params();
-  // Initialize
-  initialize();
-}
-
-void Hardware::initialize()
-{
-
-  // Create Publisher
-  m_publisher = node_->create_publisher<UInt8MultiArray>(
-    "serial_read", rclcpp::QoS{100});
   
   try {
     m_serial_driver->init_port(m_device_name, *m_device_config);
@@ -52,17 +40,13 @@ void Hardware::initialize()
       m_device_name.c_str(), ex.what());
   }
 
-  // Create Subscriber
-  //auto qos = rclcpp::QoS(rclcpp::KeepLast(32)).best_effort();
-  //auto callback = std::bind(&Hardware::subscriber_callback, this, std::placeholders::_1);
-  //m_subscriber = node_->create_subscription<UInt8MultiArray>("cmd_vel", qos, callback);
-
   cmd_vel_sub_ = node_->create_subscription<geometry_msgs::msg::Twist>("/cmd_vel", 
     rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(rmw_qos_profile_sensor_data)), 
     std::bind(&Hardware::cmd_vel_callback, this, std::placeholders::_1));
 
-  RCLCPP_INFO(node_->get_logger(), "Serial driver is running");
+  RCLCPP_INFO(node_->get_logger(), "Hardware interface is ready");
 }
+
 
 void Hardware::cmd_vel_callback(const geometry_msgs::msg::Twist::SharedPtr cmd_vel_msg)
 {
@@ -72,23 +56,15 @@ void Hardware::cmd_vel_callback(const geometry_msgs::msg::Twist::SharedPtr cmd_v
 void Hardware::receive_callback(const std::vector<uint8_t> & buffer, const size_t & bytes_transferred)
 {
   UInt8MultiArray out;
-  UInt8MultiArray out2;
+  auto s = std::string(buffer.begin(), buffer.end());
   drivers::common::to_msg(buffer, out, bytes_transferred);
-  m_publisher->publish(out);
-  m_publisher->publish(out2);
+  RCLCPP_INFO(node_->get_logger(), "Got %lu byte(s) from serial: %s", bytes_transferred, s.c_str());
 }
 
 
 void Hardware::subscriber_callback(const UInt8MultiArray::SharedPtr msg)
 {
   RCLCPP_INFO(node_->get_logger(), "Subscriber_callback");
-
-  /*
-  std::vector<uint8_t> out;
-  drivers::common::from_msg(msg, out);
-  m_serial_driver->port()->async_send(out);
-  RCLCPP_INFO(node_->get_logger(), "Sent data %s", out);
-  */
 }
 
 Hardware::~Hardware()
@@ -98,12 +74,12 @@ Hardware::~Hardware()
 void Hardware::get_params()
 {
   uint32_t baud_rate{};
-  auto fc = FlowControl::NONE;
-  auto pt = Parity::NONE;
-  auto sb = StopBits::ONE;
+  auto fc = drivers::serial_driver::FlowControl::NONE;
+  auto pt = drivers::serial_driver::Parity::NONE;
+  auto sb = drivers::serial_driver::StopBits::ONE;
 
   try {
-    m_device_name = node_->declare_parameter<std::string>("device_name", "/dev/ttyACM1");
+    m_device_name = node_->declare_parameter<std::string>("device_name", "/dev/ttyACM0");
   } catch (rclcpp::ParameterTypeException & ex) {
     RCLCPP_ERROR(node_->get_logger(), "The device name provided was invalid");
     throw ex;
@@ -120,11 +96,11 @@ void Hardware::get_params()
     const auto fc_string = node_->declare_parameter<std::string>("flow_control", "none");
 
     if (fc_string == "none") {
-      fc = FlowControl::NONE;
+      fc = drivers::serial_driver::FlowControl::NONE;
     } else if (fc_string == "hardware") {
-      fc = FlowControl::HARDWARE;
+      fc = drivers::serial_driver::FlowControl::HARDWARE;
     } else if (fc_string == "software") {
-      fc = FlowControl::SOFTWARE;
+      fc = drivers::serial_driver::FlowControl::SOFTWARE;
     } else {
       throw std::invalid_argument{
               "The flow_control parameter must be one of: none, software, or hardware."};
@@ -138,11 +114,11 @@ void Hardware::get_params()
     const auto pt_string = node_->declare_parameter<std::string>("parity", "none");
 
     if (pt_string == "none") {
-      pt = Parity::NONE;
+      pt = drivers::serial_driver::Parity::NONE;
     } else if (pt_string == "odd") {
-      pt = Parity::ODD;
+      pt = drivers::serial_driver::Parity::ODD;
     } else if (pt_string == "even") {
-      pt = Parity::EVEN;
+      pt = drivers::serial_driver::Parity::EVEN;
     } else {
       throw std::invalid_argument{
               "The parity parameter must be one of: none, odd, or even."};
@@ -156,11 +132,11 @@ void Hardware::get_params()
     const auto sb_string = node_->declare_parameter<std::string>("stop_bits", "1");
 
     if (sb_string == "1" || sb_string == "1.0") {
-      sb = StopBits::ONE;
+      sb = drivers::serial_driver::StopBits::ONE;
     } else if (sb_string == "1.5") {
-      sb = StopBits::ONE_POINT_FIVE;
+      sb = drivers::serial_driver::StopBits::ONE_POINT_FIVE;
     } else if (sb_string == "2" || sb_string == "2.0") {
-      sb = StopBits::TWO;
+      sb = drivers::serial_driver::StopBits::TWO;
     } else {
       throw std::invalid_argument{
               "The stop_bits parameter must be one of: 1, 1.5, or 2."};
@@ -170,7 +146,6 @@ void Hardware::get_params()
     throw ex;
   }
 
-  m_device_config = std::make_unique<SerialPortConfig>(baud_rate, fc, pt, sb);
+  m_device_config = std::make_unique<drivers::serial_driver::SerialPortConfig>(baud_rate, fc, pt, sb);
 }
-}  // namespace serial_driver
-}  // namespace drivers
+}

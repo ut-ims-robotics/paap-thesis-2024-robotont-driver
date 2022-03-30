@@ -3,6 +3,8 @@
 
 using namespace std::chrono_literals;
 
+namespace
+{
 Odom::Odom(rclcpp::Node::SharedPtr node) : node_(node)
 {
   auto node_ptr = node_.lock();
@@ -112,3 +114,5 @@ void Odom::publish()
     tf_pub_->publish(message);
   }
 }
+
+} // namespace robotont

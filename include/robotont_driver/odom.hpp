@@ -11,6 +11,8 @@
  * \brief Odometry class
  * This class holds and publishes robot's odometry together with a corresponding TF
  */
+namespace robotont
+{
 class Odom
 {
 public:
@@ -71,5 +73,6 @@ private:
   /** Weak pointer to driver node */
   rclcpp::Node::WeakPtr node_;
 };
+} // namespace robotont
 
 #endif

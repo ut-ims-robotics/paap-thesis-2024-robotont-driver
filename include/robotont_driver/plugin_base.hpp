@@ -3,9 +3,7 @@
 #include <rclcpp/rclcpp.hpp>
 #include <robotont_driver/hardware.hpp>
 
-namespace drivers
-{
-namespace serial_driver
+namespace robotont
 {
 class PluginBase
 {
@@ -24,6 +22,5 @@ protected:
 };
 
 typedef std::shared_ptr<PluginBase> PluginBasePtr;
-}  // namespace serial_driver
-}  // namespace drivers
+}  // namespace robotont
 #endif
