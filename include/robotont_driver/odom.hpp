@@ -1,7 +1,7 @@
 #include "rclcpp/rclcpp.hpp"
 #include <nav_msgs/msg/odometry.hpp>
-#include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
-#include "tf2_msgs/msg/tf_message.hpp"
+//#include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
+//#include "tf2_msgs/msg/tf_message.hpp"
 #include "robotont_driver/driver_exception.hpp"
 
 #ifndef ODOM_HPP
@@ -58,20 +58,21 @@ public:
 
 
 private:
+  
   /** Pointer to odometry message */
-  nav_msgs::msg::Odometry::UniquePtr odom_msg_;
+  //nav_msgs::msg::Odometry::UniquePtr odom_msg_;
 
   /** Pointer to transform message */
-  geometry_msgs::msg::TransformStamped::SharedPtr odom_transform_;
+  //geometry_msgs::msg::TransformStamped::SharedPtr odom_transform_;
 
   /** Pointer to odometry publisher */
-  rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr odom_pub_;
+  //rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr odom_pub_;
 
   /** Broadcaster class for publishing TF messages */
-  rclcpp::Publisher<tf2_msgs::msg::TFMessage>::SharedPtr tf_pub_;
+  //rclcpp::Publisher<tf2_msgs::msg::TFMessage>::SharedPtr tf_pub_;
 
   /** Weak pointer to driver node */
-  rclcpp::Node::WeakPtr node_;
+  //rclcpp::Node::WeakPtr node_;
 };
 } // namespace robotont
 

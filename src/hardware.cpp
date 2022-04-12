@@ -26,21 +26,7 @@ Hardware::Hardware(rclcpp::Node::SharedPtr node):
 
   // Get parameters 
   get_params();
-<<<<<<< HEAD
-  // Initialize
-  initialize();
-}
-
-void Hardware::initialize()
-{
-
-  // Create Publisher
-  m_publisher = this->create_publisher<UInt8MultiArray>(
-    "serial_read", rclcpp::QoS{100});
- 
-=======
   
->>>>>>> 52d9cb30cbf21f12a07e4d1429200bc29af459c9
   try {
     m_serial_driver->init_port(m_device_name, *m_device_config);
     if (!m_serial_driver->port()->is_open()) {
@@ -61,7 +47,6 @@ void Hardware::initialize()
   RCLCPP_INFO(node_->get_logger(), "Hardware interface is ready");
 }
 
-
 void Hardware::cmd_vel_callback(const geometry_msgs::msg::Twist::SharedPtr cmd_vel_msg)
 {
   RCLCPP_INFO(node_->get_logger(), "got vel cmd");
@@ -70,18 +55,55 @@ void Hardware::cmd_vel_callback(const geometry_msgs::msg::Twist::SharedPtr cmd_v
 void Hardware::receive_callback(const std::vector<uint8_t> & buffer, const size_t & bytes_transferred)
 {
   UInt8MultiArray out;
-<<<<<<< HEAD
-  RCLCPP_INFO(this->get_logger(), "buffer: %u", buffer);
-  RCLCPP_INFO(this->get_logger(), "bytes_transferred: %u", bytes_transferred);
+  packet_buffer_.append(std::string(buffer.begin(), buffer.end()));
   drivers::common::to_msg(buffer, out, bytes_transferred);
-  RCLCPP_INFO(this->get_logger(), "out: %u", out);
-  m_publisher->publish(out);
 
-=======
-  auto s = std::string(buffer.begin(), buffer.end());
-  drivers::common::to_msg(buffer, out, bytes_transferred);
-  RCLCPP_INFO(node_->get_logger(), "Got %lu byte(s) from serial: %s", bytes_transferred, s.c_str());
->>>>>>> 52d9cb30cbf21f12a07e4d1429200bc29af459c9
+  // Trim line endings from the left
+  size_t packet_beg_pos = packet_buffer_.find_first_not_of("\r\n");
+  if (packet_beg_pos == std::string::npos)
+  {
+    // buffer empty or contains only newline chars, clear everything
+    packet_buffer_ = "";
+  }
+  else
+  {
+    packet_buffer_.erase(0, packet_beg_pos);  // Trim
+  }
+
+  // Analyze the buffer by searching the line ending characters
+  size_t packet_end_pos = packet_buffer_.find_first_of("\r\n");
+  if (packet_end_pos == std::string::npos)
+  {
+    // Packet in buffer not yet complete
+  }
+
+  // The buffer contains at least one symbol marking packet ending
+  if (packet_end_pos > 2)  // Check a minimum size requirement for a valid packet
+  {
+    // Remove this packet from the buffer, the remaining newlines will be trimmed with next call
+    std::string packet_str = packet_buffer_.substr(0, packet_end_pos);
+    packet_buffer_.erase(0, packet_end_pos);
+
+    std::stringstream packet_ss(packet_str);
+    std::string arg;
+    packet_.clear();
+    while (std::getline(packet_ss, arg, ':'))
+    {
+      packet_.push_back(arg);
+    }
+
+    for (auto arg : packet_)
+    {
+      RCLCPP_INFO(node_->get_logger(), "From serial: %s", arg.c_str());
+    }
+    
+  }
+
+  // Invalid packet, clear the buffer
+  packet_buffer_ = "";
+
+
+  RCLCPP_INFO(node_->get_logger(), "hello");
 }
 
 
@@ -103,7 +125,7 @@ void Hardware::get_params()
   auto sb = drivers::serial_driver::StopBits::ONE;
 
   try {
-    m_device_name = node_->declare_parameter<std::string>("device_name", "/dev/ttyACM0");
+    m_device_name = node_->declare_parameter<std::string>("device_name", "/dev/ttyACM1");
   } catch (rclcpp::ParameterTypeException & ex) {
     RCLCPP_ERROR(node_->get_logger(), "The device name provided was invalid");
     throw ex;

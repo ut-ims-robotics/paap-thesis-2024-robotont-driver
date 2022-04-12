@@ -37,7 +37,9 @@ private:
   rclcpp::Subscription<UInt8MultiArray>::SharedPtr m_subscriber;
   rclcpp::Node::SharedPtr node_;
 
-  std::string packet_;
+  std::vector<std::string> packet_;
+  //std::string packet_;
+  std::string packet_buffer_;
   rclcpp::TimerBase::SharedPtr timer_;
   rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_sub_;
   bool reconnect_requested_;
