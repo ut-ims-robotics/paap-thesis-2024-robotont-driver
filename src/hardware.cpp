@@ -37,7 +37,7 @@ void Hardware::initialize()
   // Create Publisher
   m_publisher = this->create_publisher<UInt8MultiArray>(
     "serial_read", rclcpp::QoS{100});
-  
+ 
   try {
     m_serial_driver->init_port(m_device_name, *m_device_config);
     if (!m_serial_driver->port()->is_open()) {
@@ -71,10 +71,12 @@ void Hardware::cmd_vel_callback(const geometry_msgs::msg::Twist::SharedPtr cmd_v
 void Hardware::receive_callback(const std::vector<uint8_t> & buffer, const size_t & bytes_transferred)
 {
   UInt8MultiArray out;
-  UInt8MultiArray out2;
+  RCLCPP_INFO(this->get_logger(), "buffer: %u", buffer);
+  RCLCPP_INFO(this->get_logger(), "bytes_transferred: %u", bytes_transferred);
   drivers::common::to_msg(buffer, out, bytes_transferred);
+  RCLCPP_INFO(this->get_logger(), "out: %u", out);
   m_publisher->publish(out);
-  m_publisher->publish(out2);
+
 }
 
 
@@ -89,6 +91,7 @@ void Hardware::subscriber_callback(const UInt8MultiArray::SharedPtr msg)
   RCLCPP_INFO(this->get_logger(), "Sent data %s", out);
   */
 }
+
 
 Hardware::~Hardware()
 {
