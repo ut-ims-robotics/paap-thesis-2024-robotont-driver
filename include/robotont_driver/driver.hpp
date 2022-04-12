@@ -21,14 +21,13 @@
 #include <string>
 #include <vector>
 
-namespace drivers
-{
-namespace serial_driver
+namespace robotont
 {
 class Driver : public rclcpp::Node
 {    
 public:
   Driver();
+  void initialize();
   ~Driver();
 
 private:
@@ -39,8 +38,6 @@ private:
   HardwarePtr hw_ptr_;
   std::vector<PluginBasePtr> plugins_;
   rclcpp::TimerBase::SharedPtr timer_;
-  //ros::Timer timer_;
 };
-}  // namespace serial_driver
-}  // namespace drivers
+}  // namespace robotont
 #endif

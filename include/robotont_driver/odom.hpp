@@ -1,6 +1,6 @@
 #include "rclcpp/rclcpp.hpp"
 #include <nav_msgs/msg/odometry.hpp>
-#include "tf2_geometry_msgs/tf2_geometry_msgs.h"
+#include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
 #include "tf2_msgs/msg/tf_message.hpp"
 #include "robotont_driver/driver_exception.hpp"
 
@@ -11,6 +11,8 @@
  * \brief Odometry class
  * This class holds and publishes robot's odometry together with a corresponding TF
  */
+namespace robotont
+{
 class Odom
 {
 public:
@@ -71,5 +73,6 @@ private:
   /** Weak pointer to driver node */
   rclcpp::Node::WeakPtr node_;
 };
+} // namespace robotont
 
 #endif

@@ -5,18 +5,12 @@
 #include "robotont_driver/driver.hpp"
 #include "robotont_driver/hardware.hpp"
 
-using namespace drivers;
-using namespace serial_driver;
-
 int main(int argc, char** argv)
 {  
-
     rclcpp::init(argc, argv);
-
-    auto node = std::make_shared<Driver>();
-
-    //auto node = std::make_shared<Hardware>();
+    auto driver_node = std::make_shared<robotont::Driver>();
+    driver_node->initialize();
     
-    rclcpp::spin(node);
+    rclcpp::spin(driver_node);
     rclcpp::shutdown();
 }
