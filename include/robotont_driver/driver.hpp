@@ -28,6 +28,7 @@ class Driver : public rclcpp::Node
 public:
   Driver();
   void initialize();
+  void update_packet();
   ~Driver();
 
 private:
@@ -36,6 +37,7 @@ private:
 
   //ros::NodeHandle nh_;
   HardwarePtr hw_ptr_;
+  std::vector<std::string> hardware_packet;
   std::vector<PluginBasePtr> plugins_;
   rclcpp::TimerBase::SharedPtr timer_;
 };

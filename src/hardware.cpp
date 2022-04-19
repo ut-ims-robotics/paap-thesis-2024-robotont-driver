@@ -1,9 +1,6 @@
 #include "robotont_driver/hardware.hpp"
 #include "geometry_msgs/msg/twist.hpp"
 
-#include <rclcpp/logging.hpp>
-#include "rclcpp/rclcpp.hpp"
-
 #include <utility>
 #include <memory>
 #include <string>
@@ -23,6 +20,8 @@ Hardware::Hardware(rclcpp::Node::SharedPtr node):
     node_(node)
 {
   RCLCPP_INFO(node_->get_logger(), "Robotont driver is starting...");
+ //m_publisher = this->create_publisher<UInt8MultiArray>("serial_read", rclcpp::QoS{100});
+
 
   // Get parameters 
   get_params();
@@ -52,11 +51,20 @@ void Hardware::cmd_vel_callback(const geometry_msgs::msg::Twist::SharedPtr cmd_v
   RCLCPP_INFO(node_->get_logger(), "got vel cmd");
 }
 
+std::vector<std::string> Hardware::get_packet()
+{
+  std::vector<std::string> return_packet;
+  mutex_.lock();
+  return_packet = packets.front();
+  packets.erase(packets.begin());
+  mutex_.unlock();
+  return return_packet;
+}
+
 void Hardware::receive_callback(const std::vector<uint8_t> & buffer, const size_t & bytes_transferred)
 {
-  UInt8MultiArray out;
-  packet_buffer_.append(std::string(buffer.begin(), buffer.end()));
-  drivers::common::to_msg(buffer, out, bytes_transferred);
+  mutex_.lock();
+  packet_buffer_.append(std::string(buffer.begin(), buffer.begin()+bytes_transferred));
 
   // Trim line endings from the left
   size_t packet_beg_pos = packet_buffer_.find_first_not_of("\r\n");
@@ -64,6 +72,8 @@ void Hardware::receive_callback(const std::vector<uint8_t> & buffer, const size_
   {
     // buffer empty or contains only newline chars, clear everything
     packet_buffer_ = "";
+    mutex_.unlock();
+    return;
   }
   else
   {
@@ -75,6 +85,8 @@ void Hardware::receive_callback(const std::vector<uint8_t> & buffer, const size_
   if (packet_end_pos == std::string::npos)
   {
     // Packet in buffer not yet complete
+    mutex_.unlock();
+    return;
   }
 
   // The buffer contains at least one symbol marking packet ending
@@ -91,19 +103,25 @@ void Hardware::receive_callback(const std::vector<uint8_t> & buffer, const size_
     {
       packet_.push_back(arg);
     }
-
+    
+    /*
     for (auto arg : packet_)
     {
       RCLCPP_INFO(node_->get_logger(), "From serial: %s", arg.c_str());
     }
+    */
     
+    packets.push_back(packet_);
+    RCLCPP_INFO(node_->get_logger(), "Packet queue length: %u", packets.size());
+    mutex_.unlock();
+    return;    
   }
 
+  
   // Invalid packet, clear the buffer
   packet_buffer_ = "";
-
-
-  RCLCPP_INFO(node_->get_logger(), "hello");
+  mutex_.unlock();
+  return;
 }
 
 
