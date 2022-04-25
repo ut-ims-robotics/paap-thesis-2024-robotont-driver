@@ -51,14 +51,11 @@ void Hardware::cmd_vel_callback(const geometry_msgs::msg::Twist::SharedPtr cmd_v
   RCLCPP_INFO(node_->get_logger(), "got vel cmd");
 }
 
-std::vector<std::string> Hardware::get_packet()
+void Hardware::get_packet(std::vector<std::vector<std::string>> &  driver_packets)
 {
-  std::vector<std::string> return_packet;
   mutex_.lock();
-  return_packet = packets.front();
-  packets.erase(packets.begin());
+  driver_packets = std::move(packets_);
   mutex_.unlock();
-  return return_packet;
 }
 
 void Hardware::receive_callback(const std::vector<uint8_t> & buffer, const size_t & bytes_transferred)
@@ -111,8 +108,8 @@ void Hardware::receive_callback(const std::vector<uint8_t> & buffer, const size_
     }
     */
     
-    packets.push_back(packet_);
-    RCLCPP_INFO(node_->get_logger(), "Packet queue length: %u", packets.size());
+    packets_.push_back(packet_);
+    RCLCPP_INFO(node_->get_logger(), "Packet queue length: %u", packets_.size());
     mutex_.unlock();
     return;    
   }

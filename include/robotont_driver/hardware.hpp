@@ -27,7 +27,7 @@ public:
   void receive_callback(const std::vector<uint8_t> & buffer, const size_t & bytes_transferred);
   /// \brief Callback for sending a raw serial message
   void subscriber_callback(const UInt8MultiArray::SharedPtr msg);
-  std::vector<std::string> get_packet();
+  void get_packet(std::vector<std::vector<std::string>> & driver_packets);
 
 private:
   std::unique_ptr<drivers::common::IoContext> m_owned_ctx{};
@@ -39,7 +39,7 @@ private:
   rclcpp::Node::SharedPtr node_;
 
   std::vector<std::string> packet_;
-  std::vector<std::vector<std::string>> packets;
+  std::vector<std::vector<std::string>> packets_;
   std::mutex mutex_;
   //std::string packet_;
   std::string packet_buffer_;

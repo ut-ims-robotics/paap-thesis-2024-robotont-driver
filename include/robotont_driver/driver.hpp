@@ -31,13 +31,15 @@ public:
   void update_packet();
   ~Driver();
 
+  std::vector<std::vector<std::string>> driver_packets;
+
 private:
   //void update(const ros::TimerEvent& event);
   void update();
 
   //ros::NodeHandle nh_;
   HardwarePtr hw_ptr_;
-  std::vector<std::string> hardware_packet;
+  std::vector<std::string> hardware_packet_;
   std::vector<PluginBasePtr> plugins_;
   rclcpp::TimerBase::SharedPtr timer_;
 };
