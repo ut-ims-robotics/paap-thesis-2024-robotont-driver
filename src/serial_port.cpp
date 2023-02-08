@@ -89,6 +89,7 @@ void SerialPort::async_receive_handler(
   const asio::error_code & error,
   size_t bytes_transferred)
 {  
+  //RCLCPP_INFO(rclcpp::get_logger("SerialPort::async_receive_handler2"), "%d", m_serial_port.is_open());
   if (error) {
     RCLCPP_ERROR_STREAM(rclcpp::get_logger("SerialPort::async_receive_handler"), error.message());
     return;

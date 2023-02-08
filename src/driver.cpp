@@ -18,18 +18,6 @@ namespace robotont
     auto node_ptr = shared_from_this();
     hw_ptr_ = std::make_shared<Hardware>(node_ptr);
 
-    // Initialize plugin
-    plugins_.emplace_back(std::make_shared<PluginOdom>(hw_ptr_, "Odometry"));
-
-    // Here we load all the possible plugins
-    for (auto plugin : plugins_)
-    {
-      if (plugin)
-      {
-        RCLCPP_INFO(this->get_logger(), "Initializing plugin: '%s'.", plugin->getName().c_str());
-        plugin->initialize();
-      }
-    }
     
     timer_ = this->create_wall_timer(
             std::chrono::milliseconds(10),

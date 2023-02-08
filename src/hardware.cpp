@@ -101,19 +101,11 @@ void Hardware::receive_callback(const std::vector<uint8_t> & buffer, const size_
       packet_.push_back(arg);
     }
     
-    /*
-    for (auto arg : packet_)
-    {
-      RCLCPP_INFO(node_->get_logger(), "From serial: %s", arg.c_str());
-    }
-    */
-    
     packets_.push_back(packet_);
     RCLCPP_INFO(node_->get_logger(), "Packet queue length: %u", packets_.size());
     mutex_.unlock();
     return;    
   }
-
   
   // Invalid packet, clear the buffer
   packet_buffer_ = "";
@@ -121,15 +113,16 @@ void Hardware::receive_callback(const std::vector<uint8_t> & buffer, const size_
   return;
 }
 
-
 void Hardware::subscriber_callback(const UInt8MultiArray::SharedPtr msg)
 {
   RCLCPP_INFO(node_->get_logger(), "Subscriber_callback");
 }
 
-
 Hardware::~Hardware()
 {
+  if (m_owned_ctx) {
+    m_owned_ctx->waitForExit();
+  }
 }
 
 void Hardware::get_params()
@@ -140,7 +133,7 @@ void Hardware::get_params()
   auto sb = drivers::serial_driver::StopBits::ONE;
 
   try {
-    m_device_name = node_->declare_parameter<std::string>("device_name", "/dev/ttyACM1");
+    m_device_name = node_->declare_parameter<std::string>("device_name", "/dev/ttyACM0");
   } catch (rclcpp::ParameterTypeException & ex) {
     RCLCPP_ERROR(node_->get_logger(), "The device name provided was invalid");
     throw ex;
