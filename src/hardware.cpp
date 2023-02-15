@@ -49,6 +49,11 @@ Hardware::Hardware(rclcpp::Node::SharedPtr node):
 void Hardware::cmd_vel_callback(const geometry_msgs::msg::Twist::SharedPtr cmd_vel_msg)
 {
   RCLCPP_INFO(node_->get_logger(), "got vel cmd");
+  std::string str = "test";
+  std::vector<uint8_t> vec(str.begin(), str.end());
+  RCLCPP_INFO(node_->get_logger(), "Attepmting to send");
+  m_serial_driver->port()->async_send(vec);
+  RCLCPP_INFO(node_->get_logger(), "Sent stuff");
 }
 
 void Hardware::get_packet(std::vector<std::vector<std::string>> &  driver_packets)
@@ -60,8 +65,12 @@ void Hardware::get_packet(std::vector<std::vector<std::string>> &  driver_packet
 
 void Hardware::receive_callback(const std::vector<uint8_t> & buffer, const size_t & bytes_transferred)
 {
+  RCLCPP_INFO(node_->get_logger(), "receive_callback");
+
   mutex_.lock();
   packet_buffer_.append(std::string(buffer.begin(), buffer.begin()+bytes_transferred));
+
+  RCLCPP_INFO(node_->get_logger(), "Packet buffer contents: %s", packet_buffer_);
 
   // Trim line endings from the left
   size_t packet_beg_pos = packet_buffer_.find_first_not_of("\r\n");
