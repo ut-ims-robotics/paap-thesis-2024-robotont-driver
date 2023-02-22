@@ -65,12 +65,8 @@ void Hardware::get_packet(std::vector<std::vector<std::string>> &  driver_packet
 
 void Hardware::receive_callback(const std::vector<uint8_t> & buffer, const size_t & bytes_transferred)
 {
-  RCLCPP_INFO(node_->get_logger(), "receive_callback");
-
   mutex_.lock();
   packet_buffer_.append(std::string(buffer.begin(), buffer.begin()+bytes_transferred));
-
-  RCLCPP_INFO(node_->get_logger(), "Packet buffer contents: %s", packet_buffer_);
 
   // Trim line endings from the left
   size_t packet_beg_pos = packet_buffer_.find_first_not_of("\r\n");

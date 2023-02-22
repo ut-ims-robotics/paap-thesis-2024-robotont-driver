@@ -31,7 +31,7 @@ namespace robotont
     {
       for (auto arg : packet)
       {
-        RCLCPP_INFO(this->get_logger(), "update_packet %s", arg.c_str());
+        RCLCPP_INFO(this->get_logger(), "Recieved packet content: %s", arg.c_str());
       }
     }
     
