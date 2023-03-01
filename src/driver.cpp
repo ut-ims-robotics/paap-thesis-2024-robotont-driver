@@ -20,7 +20,7 @@ namespace robotont
 
     
     timer_ = this->create_wall_timer(
-            std::chrono::milliseconds(10),
+            std::chrono::milliseconds(20),
             std::bind(&Driver::update_packet, this));
   }
 
@@ -31,7 +31,7 @@ namespace robotont
     {
       for (auto arg : packet)
       {
-        RCLCPP_INFO(this->get_logger(), "Recieved packet content: %s", arg.c_str());
+        RCLCPP_INFO(this->get_logger(), "Received packet content: %s", arg.c_str());
       }
     }
     

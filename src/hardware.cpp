@@ -65,6 +65,7 @@ void Hardware::get_packet(std::vector<std::vector<std::string>> &  driver_packet
 
 void Hardware::receive_callback(const std::vector<uint8_t> & buffer, const size_t & bytes_transferred)
 {
+  //RCLCPP_INFO(node_->get_logger(), "Bytes_transferred: %u", bytes_transferred);
   mutex_.lock();
   packet_buffer_.append(std::string(buffer.begin(), buffer.begin()+bytes_transferred));
 
@@ -107,7 +108,7 @@ void Hardware::receive_callback(const std::vector<uint8_t> & buffer, const size_
     }
     
     packets_.push_back(packet_);
-    RCLCPP_INFO(node_->get_logger(), "Packet queue length: %u", packets_.size());
+    //RCLCPP_INFO(node_->get_logger(), "Packet queue length: %u", packets_.size());
     mutex_.unlock();
     return;    
   }

@@ -74,24 +74,19 @@ void SerialPort::async_receive(Functor func)
     });
 }
 
-void SerialPort::async_send_handler(
-  const asio::error_code & error,
-  size_t bytes_transferred)
-{
-  (void)bytes_transferred;
-  if (error) {
-    RCLCPP_ERROR_STREAM(rclcpp::get_logger("SerialPort::async_send_handler"), error.message());
-    return;
-  }
-}
-
 void SerialPort::async_receive_handler(
   const asio::error_code & error,
   size_t bytes_transferred)
-{  
-  //RCLCPP_INFO(rclcpp::get_logger("SerialPort::async_receive_handler2"), "%d", m_serial_port.is_open());
+{
+  /* //RCLCPP_INFO(rclcpp::get_logger("SerialPort::async_receive_handler2"), "%d", m_serial_port.is_open());
   if (error) {
     RCLCPP_ERROR_STREAM(rclcpp::get_logger("SerialPort::async_receive_handler"), error.message());
+    return;
+  }
+
+  // Check if the serial port is still open
+  if (!m_serial_port.is_open()) {
+    RCLCPP_WARN_STREAM(rclcpp::get_logger("SerialPort::async_receive_handler"), "Serial port is closed");
     return;
   }
 
@@ -103,8 +98,57 @@ void SerialPort::async_receive_handler(
       {
         async_receive_handler(error, bytes_transferred);
       });
+  } */
+
+  // Check if the serial port is still open
+  if (!m_serial_port.is_open()) {
+    RCLCPP_ERROR_STREAM(rclcpp::get_logger("SerialPort::async_receive_handler"), "Serial port is closed");
+    return;
+  }
+
+  if (!error)
+  {
+    // Call the user-provided function with the received data
+    if (m_func)
+    {
+      m_func(m_recv_buffer, bytes_transferred);
+    }
+
+    // Initiate another async read operation
+    m_serial_port.async_read_some(
+      asio::buffer(m_recv_buffer),
+      [this](std::error_code error, size_t bytes_transferred)
+      {
+        async_receive_handler(error, bytes_transferred);
+      });
+  }
+  else if (error != asio::error::operation_aborted && m_serial_port.is_open())
+  {
+    // Handle error conditions other than operation_aborted
+    //RCLCPP_ERROR_STREAM(rclcpp::get_logger("SerialPort::async_receive_handler"), error.message());
+
+    // Initiate another async read operation to keep the driver running
+    m_serial_port.async_read_some(
+      asio::buffer(m_recv_buffer),
+      [this](std::error_code error, size_t bytes_transferred)
+      {
+        async_receive_handler(error, bytes_transferred);
+      });
   }
 }
+
+void SerialPort::async_send_handler(
+  const asio::error_code & error,
+  size_t bytes_transferred)
+{
+  (void)bytes_transferred;
+  if (error) {
+    RCLCPP_ERROR_STREAM(rclcpp::get_logger("SerialPort::async_send_handler"), error.message());
+    return;
+  }
+}
+
+
 
 std::string SerialPort::device_name() const
 {
