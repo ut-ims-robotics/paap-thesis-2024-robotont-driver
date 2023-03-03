@@ -39,11 +39,37 @@ Hardware::Hardware(rclcpp::Node::SharedPtr node):
       m_device_name.c_str(), ex.what());
   }
 
+  // Create a watchdog timer for serial port monitoring
+  serial_wdt_ = node_->create_wall_timer(std::chrono::seconds(1), std::bind(&Hardware::checkSerialPort, this));
+
   cmd_vel_sub_ = node_->create_subscription<geometry_msgs::msg::Twist>("/cmd_vel", 
     rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(rmw_qos_profile_sensor_data)), 
     std::bind(&Hardware::cmd_vel_callback, this, std::placeholders::_1));
 
   RCLCPP_INFO(node_->get_logger(), "Hardware interface is ready");
+}
+
+void Hardware::checkSerialPort()
+{
+    RCLCPP_INFO(node_->get_logger(), "Checking port...");
+    
+    try{
+      if (!m_serial_driver->port()->is_open()) {
+      RCLCPP_INFO(node_->get_logger(), "Port closed, reopening...");
+        m_serial_driver->port()->open();
+        m_serial_driver->port()->async_receive(
+          std::bind(&Hardware::receive_callback, this, std::placeholders::_1, std::placeholders::_2));
+      }
+      else
+      {
+        RCLCPP_INFO(node_->get_logger(), "Port open.");
+      }
+    } catch (const std::exception & ex) {
+      RCLCPP_ERROR(
+        node_->get_logger(), "Error creating serial port: %s - %s",
+        m_device_name.c_str(), ex.what());
+    }
+
 }
 
 void Hardware::cmd_vel_callback(const geometry_msgs::msg::Twist::SharedPtr cmd_vel_msg)
@@ -139,7 +165,7 @@ void Hardware::get_params()
   auto sb = drivers::serial_driver::StopBits::ONE;
 
   try {
-    m_device_name = node_->declare_parameter<std::string>("device_name", "/dev/ttyACM0");
+    m_device_name = node_->declare_parameter<std::string>("device_name", "/dev/ttyUSB0");
   } catch (rclcpp::ParameterTypeException & ex) {
     RCLCPP_ERROR(node_->get_logger(), "The device name provided was invalid");
     throw ex;

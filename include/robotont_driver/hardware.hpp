@@ -30,6 +30,8 @@ public:
   void get_packet(std::vector<std::vector<std::string>> & driver_packets);
 
 private:
+  void checkSerialPort();
+
   std::unique_ptr<drivers::common::IoContext> m_owned_ctx{};
   std::string m_device_name{};
   std::unique_ptr<drivers::serial_driver::SerialPortConfig> m_device_config;
@@ -44,6 +46,7 @@ private:
   //std::string packet_;
   std::string packet_buffer_;
   rclcpp::TimerBase::SharedPtr timer_;
+  rclcpp::TimerBase::SharedPtr serial_wdt_;
   rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_sub_;
   bool reconnect_requested_;
 }; //class hardware
