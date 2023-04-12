@@ -1,5 +1,7 @@
 #include "robotont_driver/hardware.hpp"
 #include "geometry_msgs/msg/twist.hpp"
+#include "serial_driver/serial_port.hpp"
+#include "serial_driver/serial_driver.hpp"
 
 #include <utility>
 #include <memory>
@@ -165,7 +167,7 @@ void Hardware::get_params()
   auto sb = drivers::serial_driver::StopBits::ONE;
 
   try {
-    m_device_name = node_->declare_parameter<std::string>("device_name", "/dev/ttyUSB0");
+    m_device_name = node_->declare_parameter<std::string>("device_name", "/dev/ttyACM0");
   } catch (rclcpp::ParameterTypeException & ex) {
     RCLCPP_ERROR(node_->get_logger(), "The device name provided was invalid");
     throw ex;
