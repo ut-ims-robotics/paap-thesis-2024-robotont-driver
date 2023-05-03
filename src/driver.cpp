@@ -34,8 +34,6 @@ namespace robotont
         RCLCPP_INFO(this->get_logger(), "Received packet content: %s", arg.c_str());
       }
     }
-    
-    //RCLCPP_INFO(this->get_logger(), "update_packet: %s", hardware_packet);
   }
 
   Driver::~Driver()

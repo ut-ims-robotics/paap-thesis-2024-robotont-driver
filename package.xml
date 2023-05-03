@@ -18,6 +18,7 @@
   <depend>rclcpp_components</depend>
   <depend>rclcpp_lifecycle</depend>
   <depend>std_msgs</depend>
+  <depend>nav_msgs</depend>
 
   <build_depend>rclcpp</build_depend>
   <build_depend>geometry_msgs</build_depend>
