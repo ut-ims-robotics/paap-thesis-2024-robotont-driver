@@ -24,10 +24,11 @@ ament_auto_add_library(${PROJECT_NAME} SHARED
   src/hardware.cpp
   src/plugin_base.cpp
   src/driver_node.cpp
+  src/plugin_odom.cpp
 )
 # ament_target_dependencies(${PROJECT_NAME} "ASIO")
 
-add_executable(driver_node src/driver.cpp src/hardware.cpp src/driver_node.cpp )
+add_executable(driver_node src/driver.cpp src/hardware.cpp src/driver_node.cpp src/plugin_base.cpp src/plugin_odom.cpp )
 ament_target_dependencies(driver_node io_context serial_driver rclcpp geometry_msgs nav_msgs pluginlib)
 
 install(TARGETS
