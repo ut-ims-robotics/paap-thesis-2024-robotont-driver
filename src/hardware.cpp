@@ -1,7 +1,6 @@
 #include "robotont_driver/hardware.hpp"
 #include "geometry_msgs/msg/twist.hpp"
-#include "serial_driver/serial_port.hpp"
-#include "serial_driver/serial_driver.hpp"
+#include "robotont_driver/plugin_odom.hpp"
 
 #include <utility>
 #include <memory>
@@ -15,19 +14,17 @@ using std::placeholders::_1;
 
 namespace robotont
 {
-//Hardware::Hardware(rclcpp::Node::SharedPtr node): rclcpp::Node("hardware"),
 Hardware::Hardware(rclcpp::Node::SharedPtr node): 
     m_owned_ctx{new drivers::common::IoContext()},
     m_serial_driver{new drivers::serial_driver::SerialDriver(*m_owned_ctx)},
     node_(node)
 {
   RCLCPP_INFO(node_->get_logger(), "Robotont driver is starting...");
- //m_publisher = this->create_publisher<UInt8MultiArray>("serial_read", rclcpp::QoS{100});
-
 
   // Get parameters 
   get_params();
   
+  // Initialise serial port
   try {
     m_serial_driver->init_port(m_device_name, *m_device_config);
     if (!m_serial_driver->port()->is_open()) {
@@ -40,6 +37,8 @@ Hardware::Hardware(rclcpp::Node::SharedPtr node):
       node_->get_logger(), "Error creating serial port: %s - %s",
       m_device_name.c_str(), ex.what());
   }
+
+  // Create odom publisher
 
   // Create a watchdog timer for serial port monitoring
   serial_wdt_ = node_->create_wall_timer(std::chrono::seconds(1), std::bind(&Hardware::checkSerialPort, this));
@@ -93,7 +92,6 @@ void Hardware::get_packet(std::vector<std::vector<std::string>> &  driver_packet
 
 void Hardware::receive_callback(const std::vector<uint8_t> & buffer, const size_t & bytes_transferred)
 {
-  //RCLCPP_INFO(node_->get_logger(), "Bytes_transferred: %u", bytes_transferred);
   mutex_.lock();
   packet_buffer_.append(std::string(buffer.begin(), buffer.begin()+bytes_transferred));
 

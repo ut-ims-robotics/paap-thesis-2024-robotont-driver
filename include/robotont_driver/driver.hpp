@@ -9,7 +9,7 @@
 #include <lifecycle_msgs/msg/state.hpp>
 #include "geometry_msgs/msg/twist.hpp"
 
-#include "robotont_driver/odom.hpp"
+#include "robotont_driver/plugin_odom.hpp"
 #include "io_context/io_context.hpp"
 #include "serial_driver/serial_port.hpp"
 #include "serial_driver/serial_driver.hpp"
@@ -39,6 +39,7 @@ private:
 
   //ros::NodeHandle nh_;
   HardwarePtr hw_ptr_;
+  OdomPtr odom_ptr_;
   std::vector<std::string> hardware_packet_;
   std::vector<PluginBasePtr> plugins_;
   rclcpp::TimerBase::SharedPtr timer_;

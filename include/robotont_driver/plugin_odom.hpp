@@ -13,19 +13,19 @@
  */
 namespace robotont
 {
-class Odom
+class PluginOdom
 {
 public:
   /**
    * \brief Constructor
    * \param node_ Shared pointer of the driver node
    */
-  Odom(rclcpp::Node::SharedPtr node_);
+  PluginOdom(rclcpp::Node::SharedPtr node_);
 
   /**
    * \brief Destructor
    */
-  ~Odom();
+  ~PluginOdom();
 
   
   /**
@@ -58,22 +58,23 @@ public:
 
 
 private:
-  
+  rclcpp::Node::SharedPtr node_;
   /** Pointer to odometry message */
-  //nav_msgs::msg::Odometry::UniquePtr odom_msg_;
+  nav_msgs::msg::Odometry::UniquePtr odom_msg_;
 
   /** Pointer to transform message */
   //geometry_msgs::msg::TransformStamped::SharedPtr odom_transform_;
 
   /** Pointer to odometry publisher */
-  //rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr odom_pub_;
+  rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr odom_pub_;
 
   /** Broadcaster class for publishing TF messages */
   //rclcpp::Publisher<tf2_msgs::msg::TFMessage>::SharedPtr tf_pub_;
 
   /** Weak pointer to driver node */
-  //rclcpp::Node::WeakPtr node_;
+  rclcpp::Node::WeakPtr weak_node_;
 };
+typedef std::shared_ptr<PluginOdom> OdomPtr;
 } // namespace robotont
 
 #endif
