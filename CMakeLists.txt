@@ -14,6 +14,7 @@ find_package(geometry_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
 find_package(ament_cmake_auto REQUIRED)
 find_package(asio_cmake_module REQUIRED)
+find_package(tf2_geometry_msgs REQUIRED)
 find_package(ASIO REQUIRED)
 
 ament_auto_find_build_dependencies()
@@ -32,7 +33,7 @@ ament_auto_add_library(${PROJECT_NAME} SHARED
 )
 
 add_executable(driver_node src/driver.cpp src/hardware.cpp src/driver_node.cpp src/plugin_base.cpp src/plugin_odom.cpp )
-ament_target_dependencies(driver_node io_context serial_driver rclcpp geometry_msgs nav_msgs pluginlib)
+ament_target_dependencies(driver_node io_context serial_driver rclcpp geometry_msgs nav_msgs pluginlib tf2_geometry_msgs)
 
 install(TARGETS
   driver_node

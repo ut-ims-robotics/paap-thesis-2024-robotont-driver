@@ -1,8 +1,12 @@
 #include "rclcpp/rclcpp.hpp"
-#include <nav_msgs/msg/odometry.hpp>
-//#include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
-//#include "tf2_msgs/msg/tf_message.hpp"
 #include "robotont_driver/driver_exception.hpp"
+#include <nav_msgs/msg/odometry.hpp>
+//#include "tf2/convert.h"
+#include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
+#include <tf2/LinearMath/Quaternion.h>
+#include "geometry_msgs/msg/quaternion.hpp"
+#include "geometry_msgs/msg/transform_stamped.hpp"
+#include "tf2_ros/static_transform_broadcaster.h"
 
 #ifndef ODOM_HPP
 #define ODOM_HPP
@@ -27,7 +31,16 @@ public:
    */
   ~PluginOdom();
 
-  
+  /**
+   * \brief Resets odom message values
+   */
+  void reset();
+
+  /**
+   * \brief Receives the packet and transforms it into odom message
+   */
+  void packetReceived(const std::vector<std::string>& packet);
+
   /**
    * \brief Publishes the odometry and the TF messages
    */
@@ -45,16 +58,16 @@ public:
   void update(float pos_x, float pos_y, float ori_z, float lin_vel_x, float lin_vel_y, float ang_vel_z);
 
   /**
-   * \brief Sets the name of the odom frame
-   * \param frame_name Name of the odom frame
+   * \brief Sets parent frame name for odom and its tf
+   * \param frame_id ID of the frame
    */
-  void setOdomFrameName(const std::string& frame_name);
+  void setFrameId(const std::string& frame_id);
 
   /**
-   * \brief Sets the name of the robot's base frame
-   * \param frame_name Name of the robot's base frame
+   * \brief Sets child frame name for odom and its tf
+   * \param child_frame_id ID of the child frame
    */
-  void setRobotFrameName(const std::string& frame_name);
+  void setChildFrameId(const std::string& child_frame_id);
 
 
 private:
@@ -63,13 +76,13 @@ private:
   nav_msgs::msg::Odometry::UniquePtr odom_msg_;
 
   /** Pointer to transform message */
-  //geometry_msgs::msg::TransformStamped::SharedPtr odom_transform_;
+  geometry_msgs::msg::TransformStamped::UniquePtr odom_transform_;
 
   /** Pointer to odometry publisher */
   rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr odom_pub_;
 
-  /** Broadcaster class for publishing TF messages */
-  //rclcpp::Publisher<tf2_msgs::msg::TFMessage>::SharedPtr tf_pub_;
+  /** Broadcaster class for publishing transform messages */
+  std::shared_ptr<tf2_ros::StaticTransformBroadcaster> odom_broadcaster_;
 
   /** Weak pointer to driver node */
   rclcpp::Node::WeakPtr weak_node_;

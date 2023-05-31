@@ -31,6 +31,7 @@ namespace robotont
     hw_ptr_->get_packet(driver_packets);
     for (auto packet : driver_packets)
     {
+      odom_ptr_->packetReceived(packet);
       for (auto arg : packet)
       {
         RCLCPP_INFO(this->get_logger(), "Received packet content: %s", arg.c_str());
