@@ -5,11 +5,12 @@
 #include <rclcpp/rclcpp.hpp>
 #include "robotont_driver/hardware.hpp"
 #include "robotont_driver/plugin_base.hpp"
+#include "robotont_driver/plugin_odom.hpp"
+#include "robotont_driver/plugin_motors.hpp"
 #include <rclcpp_lifecycle/lifecycle_node.hpp>
 #include <lifecycle_msgs/msg/state.hpp>
 #include "geometry_msgs/msg/twist.hpp"
 
-#include "robotont_driver/plugin_odom.hpp"
 #include "io_context/io_context.hpp"
 #include "serial_driver/serial_port.hpp"
 #include "serial_driver/serial_driver.hpp"
@@ -40,6 +41,8 @@ private:
   //ros::NodeHandle nh_;
   HardwarePtr hw_ptr_;
   OdomPtr odom_ptr_;
+  MotorsPtr motor_ptr_;
+
   std::vector<std::string> hardware_packet_;
   std::vector<PluginBasePtr> plugins_;
   rclcpp::TimerBase::SharedPtr timer_;

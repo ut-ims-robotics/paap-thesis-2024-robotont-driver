@@ -25,7 +25,8 @@ public:
   /// \breif Callback for when serial data are received
   void receive_callback(const std::vector<uint8_t> & buffer, const size_t & bytes_transferred);
   /// \brief Callback for sending a raw serial message
-  void subscriber_callback(const UInt8MultiArray::SharedPtr msg);
+  //void subscriber_callback(const UInt8MultiArray::SharedPtr msg);
+  void subscriber_callback(std::string send_packet);
   void get_packet(std::vector<std::vector<std::string>> & driver_packets);
 
 private:
@@ -46,7 +47,6 @@ private:
   std::string packet_buffer_;
   rclcpp::TimerBase::SharedPtr timer_;
   rclcpp::TimerBase::SharedPtr serial_wdt_;
-  rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_sub_;
   bool reconnect_requested_;
 }; //class hardware
 

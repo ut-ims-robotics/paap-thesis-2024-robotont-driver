@@ -38,14 +38,8 @@ Hardware::Hardware(rclcpp::Node::SharedPtr node):
       m_device_name.c_str(), ex.what());
   }
 
-  // Create odom publisher
-
   // Create a watchdog timer for serial port monitoring
   serial_wdt_ = node_->create_wall_timer(std::chrono::seconds(1), std::bind(&Hardware::checkSerialPort, this));
-
-  cmd_vel_sub_ = node_->create_subscription<geometry_msgs::msg::Twist>("/cmd_vel", 
-    rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(rmw_qos_profile_sensor_data)), 
-    std::bind(&Hardware::cmd_vel_callback, this, std::placeholders::_1));
 
   RCLCPP_INFO(node_->get_logger(), "Hardware interface is ready");
 }
@@ -71,16 +65,6 @@ void Hardware::checkSerialPort()
         m_device_name.c_str(), ex.what());
     }
 
-}
-
-void Hardware::cmd_vel_callback(const geometry_msgs::msg::Twist::SharedPtr cmd_vel_msg)
-{
-  RCLCPP_INFO(node_->get_logger(), "got vel cmd");
-  std::string str = "test";
-  std::vector<uint8_t> vec(str.begin(), str.end());
-  RCLCPP_INFO(node_->get_logger(), "Attepmting to send");
-  m_serial_driver->port()->async_send(vec);
-  RCLCPP_INFO(node_->get_logger(), "Sent stuff");
 }
 
 void Hardware::get_packet(std::vector<std::vector<std::string>> &  driver_packets)
@@ -145,9 +129,11 @@ void Hardware::receive_callback(const std::vector<uint8_t> & buffer, const size_
   return;
 }
 
-void Hardware::subscriber_callback(const UInt8MultiArray::SharedPtr msg)
+void Hardware::subscriber_callback(std::string send_packet)
 {
   RCLCPP_INFO(node_->get_logger(), "Subscriber_callback");
+  std::vector<uint8_t> vec(send_packet.begin(), send_packet.end());
+  m_serial_driver->port()->async_send(vec);
 }
 
 Hardware::~Hardware()

@@ -1,6 +1,7 @@
 #include "robotont_driver/driver.hpp"
 #include "robotont_driver/hardware.hpp"
 #include "robotont_driver/plugin_odom.hpp"
+#include "robotont_driver/plugin_motors.hpp"
 
 
 //namespace drivers
@@ -20,6 +21,8 @@ namespace robotont
     hw_ptr_ = std::make_shared<Hardware>(node_ptr);
 
     odom_ptr_ = std::make_shared<PluginOdom>(node_ptr);
+
+    motor_ptr_ = std::make_shared<PluginMotors>(hw_ptr_, node_ptr);
     
     timer_ = this->create_wall_timer(
             std::chrono::milliseconds(20),
