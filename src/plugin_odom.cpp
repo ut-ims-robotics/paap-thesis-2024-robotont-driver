@@ -28,6 +28,7 @@ PluginOdom::~PluginOdom()
 {
 }
 
+// Create Odom package from the data received from serial port
 void PluginOdom::packetReceived(const std::vector<std::string>& packet)
 {
   if (packet.size() != 7 || packet[0] != "ODOM")
@@ -85,7 +86,7 @@ void PluginOdom::setChildFrameId(const std::string& child_frame_id)
   odom_transform_->child_frame_id = child_frame_id;
 }
 
-
+// Publish the odom message to odom topic
 void PluginOdom::publish()
 {
   if (odom_pub_)
@@ -98,6 +99,7 @@ void PluginOdom::publish()
   }
 }
 
+// Clear odom message
 void PluginOdom::reset()
 {
   odom_msg_->header.stamp = node_->now();

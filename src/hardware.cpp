@@ -24,7 +24,7 @@ Hardware::Hardware(rclcpp::Node::SharedPtr node):
   // Get parameters 
   get_params();
   
-  // Initialise serial port
+  // Initialise and open serial port
   try {
     m_serial_driver->init_port(m_device_name, *m_device_config);
     if (!m_serial_driver->port()->is_open()) {
@@ -44,6 +44,7 @@ Hardware::Hardware(rclcpp::Node::SharedPtr node):
   RCLCPP_INFO(node_->get_logger(), "Hardware interface is ready");
 }
 
+//Check if serial port is open, if it's closed then reopen the port
 void Hardware::checkSerialPort()
 {
     RCLCPP_INFO(node_->get_logger(), "Checking port...");
@@ -67,6 +68,7 @@ void Hardware::checkSerialPort()
 
 }
 
+// Return list of driver packets 
 void Hardware::get_packet(std::vector<std::vector<std::string>> &  driver_packets)
 {
   mutex_.lock();
@@ -74,6 +76,7 @@ void Hardware::get_packet(std::vector<std::vector<std::string>> &  driver_packet
   mutex_.unlock();
 }
 
+// Callback function for reading from serial
 void Hardware::receive_callback(const std::vector<uint8_t> & buffer, const size_t & bytes_transferred)
 {
   mutex_.lock();
@@ -129,6 +132,7 @@ void Hardware::receive_callback(const std::vector<uint8_t> & buffer, const size_
   return;
 }
 
+// Callback function for sending data to serial port
 void Hardware::subscriber_callback(std::string send_packet)
 {
   RCLCPP_INFO(node_->get_logger(), "Subscriber_callback");
@@ -143,6 +147,7 @@ Hardware::~Hardware()
   }
 }
 
+// Function to define serial parameters
 void Hardware::get_params()
 {
   uint32_t baud_rate{};

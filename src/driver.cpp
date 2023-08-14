@@ -37,7 +37,7 @@ namespace robotont
       odom_ptr_->packetReceived(packet);
       for (auto arg : packet)
       {
-        RCLCPP_INFO(this->get_logger(), "Received packet content: %s", arg.c_str());
+        //RCLCPP_INFO(this->get_logger(), "Received packet content: %s", arg.c_str());
       }
     }
     
