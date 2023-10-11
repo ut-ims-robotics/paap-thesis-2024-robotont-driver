@@ -20,10 +20,11 @@ namespace robotont
     auto node_ptr = shared_from_this();
     hw_ptr_ = std::make_shared<Hardware>(node_ptr);
 
+    // Initialialize plugins
     odom_ptr_ = std::make_shared<PluginOdom>(node_ptr);
-
     motor_ptr_ = std::make_shared<PluginMotors>(hw_ptr_, node_ptr);
     
+    // Create timer to read data from the robot 
     timer_ = this->create_wall_timer(
             std::chrono::milliseconds(20),
             std::bind(&Driver::update_packet, this));

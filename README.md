@@ -33,9 +33,24 @@ colcon build
 source install/local_setup.bash
 ros2 run robotont_driver driver_node
 ```
+Starting the driver directly utilizes the parameters hardcoded in the hardware.cpp file. In order to change parameters launch file should be used:
+
+```bash
+ros2 launch robotont_driver driver_launch.py
+```
+
+For changing the launch parameters once, they can also be specified via the command line:
+
+```bash
+ros2 launch robotont_driver driver_launch.py device_name:='new_device_name_parameter'
+```
 
 ## 2. Available plugins
 
 ### plugin\_odom
 
 This plugin receives the ODOM packet from the robot and publishes the data on /odom (<nav_msgs::Odometry>) topic. This plugin also broadcasts an odom frame via TF.
+
+### plugin\_motor
+
+This plugin subscribes to cmd_vel topic and relays the velocities to robotont's motors
