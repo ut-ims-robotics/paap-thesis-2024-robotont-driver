@@ -208,11 +208,11 @@ void Hardware::get_params()
   try {
     const auto sb_string = node_->declare_parameter<std::string>("stop_bits", "1");
 
-    if (sb_string == "1" || sb_string == "1.0") {
+    if (sb_string == "1" || sb_string == "1.0" || sb_string == "one") {
       sb = drivers::serial_driver::StopBits::ONE;
-    } else if (sb_string == "1.5") {
+    } else if (sb_string == "1.5" || sb_string == "one_point_five") {
       sb = drivers::serial_driver::StopBits::ONE_POINT_FIVE;
-    } else if (sb_string == "2" || sb_string == "2.0") {
+    } else if (sb_string == "2" || sb_string == "2.0" || sb_string == "two") {
       sb = drivers::serial_driver::StopBits::TWO;
     } else {
       throw std::invalid_argument{
