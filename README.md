@@ -27,25 +27,38 @@ rosdep install --from-paths src -y --ignore-src
 colcon build
 ```
 
-### 5. Source install files and start the driver
+### 5. Source install files and start the driver using the launch configuration
 
 ```bash
 source install/local_setup.bash
-ros2 run robotont_driver driver_node
-```
-Starting the driver directly utilizes the parameters hardcoded in the hardware.cpp file. In order to change parameters launch file should be used:
-
-```bash
 ros2 launch robotont_driver driver_launch.py
 ```
 
-For changing the launch parameters once, they can also be specified via the command line:
+Launch parameters are defined in 3 different places. With the following hierarchy (lower number overwrites lower number):
+* 1: The parameters specified via command line, when using the launch file
+* 2: The parameters defined in the launch file
+* 3: The parameters hardcoded in the driver code
+
+To change the launch parameters once, they can also be specified via the command line:
 
 ```bash
 ros2 launch robotont_driver driver_launch.py device_name:='new_device_name_parameter'
 ```
 
-## 2. Available plugins
+## 2. Moving the robot
+
+The drivers for the simulated and the real robot both subscribe to a `cmd_vel` topic. To move the robot, we have to publish velocity messages to this exact topic.
+
+Here we use the teleop\_twist\_keyboard node, which translates command line keypresses to velocity messages and published these by default on `cmd_vel` topic.
+Run the node
+```bash
+ros2 run teleop_twist_keyboard teleop_twist_keyboard
+```
+
+* Follow the printout in the console to learn how to control the robot. Enjoy the ride!
+
+
+## 3. Available plugins
 
 ### plugin\_odom
 
