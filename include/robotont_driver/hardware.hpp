@@ -12,7 +12,6 @@ namespace robotont
 {
 typedef std::vector<std::string> RobotontPacket;
 
-//class Hardware : public rclcpp::Node
 class Hardware
 {
 public:
@@ -27,7 +26,7 @@ public:
   /// \brief Callback for sending a raw serial message
   //void subscriber_callback(const UInt8MultiArray::SharedPtr msg);
   void subscriber_callback(std::string send_packet);
-  void get_packet(std::vector<std::vector<std::string>> & driver_packets);
+  void get_packet(std::vector<RobotontPacket> & driver_packets);
 
 private:
   void checkSerialPort();
@@ -40,8 +39,8 @@ private:
   rclcpp::Subscription<UInt8MultiArray>::SharedPtr m_subscriber;
   rclcpp::Node::SharedPtr node_;
 
-  std::vector<std::string> packet_;
-  std::vector<std::vector<std::string>> packets_;
+  RobotontPacket packet_;
+  std::vector<RobotontPacket> packets_;
   std::mutex mutex_;
   //std::string packet_;
   std::string packet_buffer_;

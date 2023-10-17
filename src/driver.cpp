@@ -44,6 +44,11 @@ namespace robotont
     if (plugin_motor) {
       motor_ptr_ = std::make_shared<PluginMotors>(hw_ptr_, node_ptr);
     }
+    /*
+    if (led_module) {
+      led_ptr_ = std::make_shared<PluginLedModule>(hw_ptr_, node_ptr);
+    }
+    */
     
     // Create timer to read data from the robot 
     timer_ = this->create_wall_timer(
@@ -59,7 +64,7 @@ namespace robotont
       odom_ptr_->packetReceived(packet);
       for (auto arg : packet)
       {
-        //RCLCPP_INFO(this->get_logger(), "Received packet content: %s", arg.c_str());
+        RCLCPP_INFO(this->get_logger(), "Received packet content: %s", arg.c_str());
       }
     }
     

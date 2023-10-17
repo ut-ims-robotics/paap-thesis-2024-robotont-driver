@@ -69,7 +69,7 @@ void Hardware::checkSerialPort()
 }
 
 // Return list of driver packets 
-void Hardware::get_packet(std::vector<std::vector<std::string>> &  driver_packets)
+void Hardware::get_packet(std::vector<RobotontPacket> &  driver_packets)
 {
   mutex_.lock();
   driver_packets = std::move(packets_);
