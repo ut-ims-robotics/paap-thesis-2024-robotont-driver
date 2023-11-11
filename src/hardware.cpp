@@ -47,18 +47,18 @@ Hardware::Hardware(rclcpp::Node::SharedPtr node):
 //Check if serial port is open, if it's closed then reopen the port
 void Hardware::checkSerialPort()
 {
-    RCLCPP_INFO(node_->get_logger(), "Checking port...");
+    RCLCPP_DEBUG(node_->get_logger(), "Checking port...");
     
     try{
       if (!m_serial_driver->port()->is_open()) {
-      RCLCPP_INFO(node_->get_logger(), "Port closed, reopening...");
+      RCLCPP_DEBUG(node_->get_logger(), "Port closed, reopening...");
         m_serial_driver->port()->open();
         m_serial_driver->port()->async_receive(
           std::bind(&Hardware::receive_callback, this, std::placeholders::_1, std::placeholders::_2));
       }
       else
       {
-        RCLCPP_INFO(node_->get_logger(), "Port open.");
+        RCLCPP_DEBUG(node_->get_logger(), "Port open.");
       }
     } catch (const std::exception & ex) {
       RCLCPP_ERROR(
@@ -121,7 +121,6 @@ void Hardware::receive_callback(const std::vector<uint8_t> & buffer, const size_
     }
     
     packets_.push_back(packet_);
-    //RCLCPP_INFO(node_->get_logger(), "Packet queue length: %u", packets_.size());
     mutex_.unlock();
     return;    
   }
@@ -135,7 +134,7 @@ void Hardware::receive_callback(const std::vector<uint8_t> & buffer, const size_
 // Callback function for sending data to serial port
 void Hardware::subscriber_callback(std::string send_packet)
 {
-  RCLCPP_INFO(node_->get_logger(), "Subscriber_callback");
+  RCLCPP_DEBUG(node_->get_logger(), "Subscriber_callback");
   std::vector<uint8_t> vec(send_packet.begin(), send_packet.end());
   m_serial_driver->port()->async_send(vec);
 }

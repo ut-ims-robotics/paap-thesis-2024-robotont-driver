@@ -21,6 +21,16 @@ rosdep update
 rosdep install --from-paths src -y --ignore-src
 ```
 
+The driver also relies on the following packages:
+* 1: io-context
+* 2: serial-driver
+* 3: asio-cmake-module
+
+Ensure you are in your workspace root folder and enter the following commands to install them:
+```bash
+sudo apt install ros-humble-io-context ros-humble-serial-driver ros-humble-asio-cmake-module
+```
+
 ### 4. Build the driver
 
 ```bash

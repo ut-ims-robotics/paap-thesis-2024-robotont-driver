@@ -4,7 +4,6 @@
 
 #include <robotont_msgs/LedModulePixel.h> 
 #include <robotont_msgs/LedModuleSegment.h>
-//TODO: above packages don't exist for ros2 rolling
 
 #ifndef LED_HPP
 #define LED_HPP

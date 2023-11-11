@@ -20,7 +20,7 @@ public:
         vel_sub_ = this->create_subscription<geometry_msgs::msg::Twist>(
             "/cmd_vel", 1000, std::bind(&FakeDriverNode::receiveCmd, this, std::placeholders::_1));
 
-        odom_pub_ = this->create_publisher<nav_msgs::msg::Odometry>("odom", 50);
+        odom_pub_ = this->create_publisher<nav_msgs::msg::Odometry>("/odom", 50);
         odom_broadcaster_ = std::make_shared<tf2_ros::TransformBroadcaster>(this);
 
         // Initialize odometry variables

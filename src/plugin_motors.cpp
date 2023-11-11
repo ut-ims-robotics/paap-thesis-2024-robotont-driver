@@ -21,10 +21,8 @@ PluginMotors::~PluginMotors()
 // Callback function to read data from cmd_vel topic
 void PluginMotors::cmd_vel_callback(const geometry_msgs::msg::Twist::SharedPtr cmd_vel_msg)
 {
-  RCLCPP_INFO(node_->get_logger(), "got vel cmd");
-  RCLCPP_INFO(node_->get_logger(), "Attepmting to send");
   writeRobotSpeed(cmd_vel_msg->linear.x, cmd_vel_msg->linear.y, cmd_vel_msg->angular.z);
-  RCLCPP_INFO(node_->get_logger(), "Sent stuff");
+  RCLCPP_DEBUG(node_->get_logger(), "Command sent via serial");
 }
 
 // Function to create the string packet from cmd_vel topic and send it to serial

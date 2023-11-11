@@ -20,7 +20,7 @@ PluginOdom::PluginOdom(rclcpp::Node::SharedPtr node_) : node_(node_)
 
 
   // Initialize odom publisher
-  odom_pub_ = node_->create_publisher<nav_msgs::msg::Odometry>("odom", 2);
+  odom_pub_ = node_->create_publisher<nav_msgs::msg::Odometry>("/odom", 2);
   //odom_broadcaster_ = std::make_shared<tf2_ros::StaticTransformBroadcaster>(node_);
 }
 
