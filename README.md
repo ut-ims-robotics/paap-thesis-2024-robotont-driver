@@ -26,13 +26,13 @@ The driver also relies on the following packages:
 * 2: serial-driver
 * 3: asio-cmake-module
 
-Ensure you are in your workspace root folder and enter the following commands to install them:
 ```bash
 sudo apt install ros-humble-io-context ros-humble-serial-driver ros-humble-asio-cmake-module
 ```
 
 ### 4. Build the driver
 
+Ensure you are in your workspace root folder and enter the following commands to install them:
 ```bash
 colcon build
 ```
@@ -52,8 +52,9 @@ Launch parameters are defined in 3 different places. With the following hierarch
 To change the launch parameters once, they can also be specified via the command line:
 
 ```bash
-ros2 launch robotont_driver driver_launch.py device_name:='new_device_name_parameter'
+ros2 launch robotont_driver driver_launch.py device_name:='/dev/ttyACM0'
 ```
+
 
 ## 2. Moving the robot
 
