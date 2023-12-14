@@ -7,6 +7,7 @@
 #include "robotont_driver/plugin_base.hpp"
 #include "robotont_driver/plugin_odom.hpp"
 #include "robotont_driver/plugin_motors.hpp"
+#include "robotont_driver/plugin_led_module.hpp"
 #include <rclcpp_lifecycle/lifecycle_node.hpp>
 #include <lifecycle_msgs/msg/state.hpp>
 #include "geometry_msgs/msg/twist.hpp"
@@ -42,6 +43,7 @@ private:
   HardwarePtr hw_ptr_;
   OdomPtr odom_ptr_;
   MotorsPtr motor_ptr_;
+  LedModulePtr led_ptr_;
 
   std::vector<std::string> hardware_packet_;
   std::vector<PluginBasePtr> plugins_;

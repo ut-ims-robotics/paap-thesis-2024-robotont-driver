@@ -12,7 +12,7 @@ def generate_launch_description():
         DeclareLaunchArgument('stop_bits', default_value='one', description='Stop bits (one/one_point_five/two)'),
         DeclareLaunchArgument('plugin_odom', default_value='True', description='Odom plugin =active'),
         DeclareLaunchArgument('plugin_motor', default_value='True', description='Motors plugin =active'),
-        DeclareLaunchArgument('plugin_led_module', default_value='False', description='LED plugin =active'),
+        DeclareLaunchArgument('plugin_led_module', default_value='True', description='LED plugin =active'),
         DeclareLaunchArgument('plugin_power_supply', default_value='False', description='Power supply plugin =active'),
         DeclareLaunchArgument('plugin_range', default_value='False', description='Range plugin =active'),
 

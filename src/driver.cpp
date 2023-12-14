@@ -2,7 +2,7 @@
 #include "robotont_driver/hardware.hpp"
 #include "robotont_driver/plugin_odom.hpp"
 #include "robotont_driver/plugin_motors.hpp"
-
+#include "robotont_driver/plugin_led_module.hpp"
 
 //namespace drivers
 //{
@@ -36,7 +36,6 @@ namespace robotont
       RCLCPP_ERROR(get_logger(), "A provided plugin param was invalid");
       throw ex;
     }
-    
     // Initialialize plugins as defined by parameters
     if (plugin_odom) {
       odom_ptr_ = std::make_shared<PluginOdom>(node_ptr);
@@ -44,11 +43,9 @@ namespace robotont
     if (plugin_motor) {
       motor_ptr_ = std::make_shared<PluginMotors>(hw_ptr_, node_ptr);
     }
-    /*
-    if (led_module) {
+    if (plugin_led_module) {
       led_ptr_ = std::make_shared<PluginLedModule>(hw_ptr_, node_ptr);
     }
-    */
     
     // Create timer to read data from the robot 
     timer_ = this->create_wall_timer(
