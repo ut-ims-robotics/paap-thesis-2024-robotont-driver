@@ -24,7 +24,7 @@
 
   void PluginLedModule::writePixel(unsigned int idx, uint8_t r, uint8_t g, uint8_t b)
   {
-    RCLCPP_INFO(node_->get_logger(), ("Sent LD:"+std::to_string(idx)+":"+std::to_string(r)+":"+std::to_string(g)+":"+std::to_string(b)).c_str());
+    //RCLCPP_INFO(node_->get_logger(), ("Sent LD:"+std::to_string(idx)+":"+std::to_string(r)+":"+std::to_string(g)+":"+std::to_string(b)).c_str());
     std::string packet = "LD:"+std::to_string(idx)+":"+std::to_string(r)+":"+std::to_string(g)+":"+std::to_string(b)+"\r\n";
     if (hw_ptr_)
     {
@@ -40,7 +40,7 @@
 
   void PluginLedModule::writeMode(uint8_t mode, uint8_t r, uint8_t g, uint8_t b)
   {
-    RCLCPP_INFO(node_->get_logger(), ("Sent LM:"+std::to_string(mode)+":"+std::to_string(r)+":"+std::to_string(g)+":"+std::to_string(b)).c_str());
+    //RCLCPP_INFO(node_->get_logger(), ("Sent LM:"+std::to_string(mode)+":"+std::to_string(r)+":"+std::to_string(g)+":"+std::to_string(b)).c_str());
     std::string packet = "LM:"+std::to_string(mode)+":"+std::to_string(r)+":"+std::to_string(g)+":"+std::to_string(b)+"\r\n";
     if (hw_ptr_)
     {
