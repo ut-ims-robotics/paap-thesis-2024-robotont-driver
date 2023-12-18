@@ -31,9 +31,10 @@ ament_auto_add_library(${PROJECT_NAME} SHARED
   src/driver_node.cpp
   src/plugin_odom.cpp
   src/plugin_motors.cpp
+  src/plugin_led_module.cpp
 )
 
-add_executable(driver_node src/driver.cpp src/hardware.cpp src/driver_node.cpp src/plugin_base.cpp src/plugin_odom.cpp src/plugin_motors.cpp)
+add_executable(driver_node src/driver.cpp src/hardware.cpp src/driver_node.cpp src/plugin_base.cpp src/plugin_odom.cpp src/plugin_motors.cpp src/plugin_led_module.cpp)
 ament_target_dependencies(driver_node io_context serial_driver rclcpp geometry_msgs nav_msgs pluginlib tf2_geometry_msgs)
 
 add_executable(fake_driver_node src/fake_driver_node.cpp)

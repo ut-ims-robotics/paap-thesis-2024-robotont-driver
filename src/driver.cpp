@@ -3,17 +3,14 @@
 #include "robotont_driver/plugin_odom.hpp"
 #include "robotont_driver/plugin_motors.hpp"
 
-
-//namespace drivers
-//{
-//namespace serial_driver
-//{
 namespace robotont
 {
+  // Constructor for the Driver class
   Driver::Driver() : Node("driver_node")
   {
   }
   
+  // Function to initialize the driver
   void Driver::initialize()
   {
     // Create a shared pointer of this node to allow ros functionality in subclasses
@@ -37,18 +34,13 @@ namespace robotont
       throw ex;
     }
     
-    // Initialialize plugins as defined by parameters
+    // Initialize plugins as defined by parameters
     if (plugin_odom) {
       odom_ptr_ = std::make_shared<PluginOdom>(node_ptr);
     }
     if (plugin_motor) {
       motor_ptr_ = std::make_shared<PluginMotors>(hw_ptr_, node_ptr);
     }
-    /*
-    if (led_module) {
-      led_ptr_ = std::make_shared<PluginLedModule>(hw_ptr_, node_ptr);
-    }
-    */
     
     // Create timer to read data from the robot 
     timer_ = this->create_wall_timer(
@@ -56,6 +48,7 @@ namespace robotont
             std::bind(&Driver::update_packet, this));
   }
 
+  // Function to update the packet
   void Driver::update_packet()
   {
     hw_ptr_->get_packet(driver_packets);
@@ -69,10 +62,9 @@ namespace robotont
     }
   }
 
+  // Destructor for the Driver class
   Driver::~Driver()
   {
   }
 
 }
-//}  // namespace serial_driver
-//}  // namespace drivers
