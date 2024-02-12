@@ -2,8 +2,9 @@
 #include "robotont_driver/driver_exception.hpp"
 #include "robotont_driver/plugin_base.hpp"
 
-#include <robotont_msgs/LedModulePixel.h> 
-#include <robotont_msgs/LedModuleSegment.h>
+#include "robotont_msgs/msg/led_module_pixel.hpp"
+#include "robotont_msgs/msg/led_module_mode.hpp" 
+//#include "robotont_msgs/msg/led_module_segment.hpp"
 
 #ifndef LED_HPP
 #define LED_HPP
@@ -27,12 +28,15 @@ private:
   HardwarePtr hw_ptr_;
 
   void writePixel(unsigned int idx, uint8_t r, uint8_t g, uint8_t b);
-  void writeSegment(const robotont_msgs::LedModuleSegment& led_seg_msg);
-  void pixel_callback(const robotont_msgs::LedModuleSegment& led_px_msg);
-  void segment_callback(const robotont_msgs::LedModuleSegment& led_seg_msg);
+  void pixel_callback(const robotont_msgs::msg::LedModulePixel::SharedPtr led_px_msg);
+  void writeMode(uint8_t mode, uint8_t r, uint8_t g, uint8_t b);
+  void mode_callback(const robotont_msgs::msg::LedModuleMode::SharedPtr led_mode_msg);
+  //void writeSegment(const robotont_msgs::msg::LedModuleSegment::SharedPtr led_seg_msg);
+  //void segment_callback(const robotont_msgs::msg::LedModuleSegment::SharedPtr led_seg_msg);
 
-  rclcpp::Subscription<RobotontPacket>::SharedPtr led_pixel_sub_; //TODO: fix issue with not being able to access RobotontPacket within the same namespace. When done, also update other classes to use RobotontPacket.
-  rclcpp::Subscription<RobotontPacket>::SharedPtr led_segment_sub_;
+  rclcpp::Subscription<robotont_msgs::msg::LedModulePixel>::SharedPtr led_pixel_sub_; //TODO: fix issue with not being able to access RobotontPacket within the same namespace. When done, also update other classes to use RobotontPacket.
+  rclcpp::Subscription<robotont_msgs::msg::LedModuleMode>::SharedPtr led_mode_sub_;
+  //rclcpp::Subscription<robotont_msgs::msg::LedModuleSegment>::SharedPtr led_segment_sub_;
 };
 
 typedef std::shared_ptr<PluginLedModule> LedModulePtr;
