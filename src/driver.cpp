@@ -45,6 +45,12 @@ namespace robotont
     if (plugin_led_module) {
       //led_ptr_ = std::make_shared<PluginLedModule>(hw_ptr_, node_ptr);
     }
+    if (plugin_power_supply) {
+      //create pointer for power supply plugin
+    }
+    if (plugin_range) {
+      //create pointer for range plugin
+    }
     
     // Create timer to read data from the robot 
     timer_ = this->create_wall_timer(

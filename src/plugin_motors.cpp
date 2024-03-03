@@ -5,7 +5,7 @@ using namespace std::chrono_literals;
 namespace robotont
 {
 // Constructor for the PluginMotors class
-PluginMotors::PluginMotors(HardwarePtr hw_ptr, rclcpp::Node::SharedPtr node_) : hw_ptr_(hw_ptr), node_(node_)
+PluginMotors::PluginMotors(HardwarePtr hw_ptr, rclcpp::Node::SharedPtr node_) : node_(node_), hw_ptr_(hw_ptr)
 {
   RCLCPP_INFO(node_->get_logger(), "Robotont motors are starting...");
 
