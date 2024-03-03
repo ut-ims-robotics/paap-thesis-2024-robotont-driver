@@ -52,23 +52,23 @@ void PluginOdom::packetReceived(const std::vector<std::string>& packet)
     RCLCPP_ERROR(node_->get_logger(), "ODOM error reading packet");
   }
 
-  odom_msg_->header.stamp = node_->now();
-  odom_msg_->pose.pose.position.x = pos_x;
-  odom_msg_->pose.pose.position.y = pos_y;
-  odom_msg_->pose.pose.position.z = ori_z;
-  odom_msg_->pose.pose.orientation.x = lin_vel_x;
-  odom_msg_->pose.pose.orientation.y = lin_vel_y;
-  odom_msg_->pose.pose.orientation.z = ang_vel_z;
-  odom_msg_->pose.pose.orientation.w = 1;
+  geometry_msgs::msg::Quaternion odom_quat = tf2::toMsg(tf2::Quaternion(tf2::Vector3(0.0, 0.0, 1.0), ori_z));
 
-  tf2::Quaternion q;
-  q.setRPY(0.0, 0.0, ori_z);
-  geometry_msgs::msg::Quaternion quat_msg = tf2::toMsg(q);
   odom_transform_->header.stamp = node_->now();
   odom_transform_->transform.translation.x = pos_x;
   odom_transform_->transform.translation.y = pos_y;
   odom_transform_->transform.translation.z = 0;
-  odom_transform_->transform.rotation = quat_msg;
+  odom_transform_->transform.rotation = odom_quat;
+
+  odom_msg_->header.stamp = node_->now();
+  odom_msg_->pose.pose.position.x = pos_x;
+  odom_msg_->pose.pose.position.y = pos_y;
+  odom_msg_->pose.pose.position.z = 0;
+  odom_msg_->pose.pose.orientation = odom_quat;
+
+  odom_msg_->twist.twist.linear.x = lin_vel_x;
+  odom_msg_->twist.twist.linear.y = lin_vel_y;
+  odom_msg_->twist.twist.angular.z = ang_vel_z;
 
   publish();
 }

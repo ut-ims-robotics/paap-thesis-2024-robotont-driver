@@ -2,7 +2,7 @@
 #include "robotont_driver/hardware.hpp"
 #include "robotont_driver/plugin_odom.hpp"
 #include "robotont_driver/plugin_motors.hpp"
-#include "robotont_driver/plugin_led_module.hpp"
+//#include "robotont_driver/plugin_led_module.hpp"
 
 namespace robotont
 {
@@ -43,7 +43,7 @@ namespace robotont
       motor_ptr_ = std::make_shared<PluginMotors>(hw_ptr_, node_ptr);
     }
     if (plugin_led_module) {
-      led_ptr_ = std::make_shared<PluginLedModule>(hw_ptr_, node_ptr);
+      //led_ptr_ = std::make_shared<PluginLedModule>(hw_ptr_, node_ptr);
     }
     
     // Create timer to read data from the robot 

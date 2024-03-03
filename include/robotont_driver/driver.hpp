@@ -6,7 +6,7 @@
 #include "robotont_driver/plugin_base.hpp"
 #include "robotont_driver/plugin_odom.hpp"
 #include "robotont_driver/plugin_motors.hpp"
-#include "robotont_driver/plugin_led_module.hpp"
+//#include "robotont_driver/plugin_led_module.hpp"
 #include <rclcpp_lifecycle/lifecycle_node.hpp>
 #include <lifecycle_msgs/msg/state.hpp>
 #include "geometry_msgs/msg/twist.hpp"
@@ -50,7 +50,7 @@ private:
   OdomPtr odom_ptr_;
   // Pointer to the Motors object
   MotorsPtr motor_ptr_;
-  LedModulePtr led_ptr_;
+  //LedModulePtr led_ptr_;
 
   // Vector to store hardware packets
   std::vector<std::string> hardware_packet_;

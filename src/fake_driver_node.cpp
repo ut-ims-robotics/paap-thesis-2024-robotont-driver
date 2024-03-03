@@ -67,6 +67,22 @@ private:
     y_ += delta_y;
     th_ += delta_th;
 
+    // first, we'll publish the transform over tf
+    geometry_msgs::msg::TransformStamped odom_trans;
+    odom_trans.header.stamp = this->now();
+    odom_trans.header.frame_id = odom_frame_;
+    odom_trans.child_frame_id = base_frame_;
+
+    odom_trans.transform.translation.x = x_;
+    odom_trans.transform.translation.y = y_;
+    odom_trans.transform.translation.z = 0.0;
+    // since all odometry is 6DOF we'll need a quaternion created from yaw
+    geometry_msgs::msg::Quaternion odom_quat = tf2::toMsg(tf2::Quaternion(tf2::Vector3(0.0, 0.0, 1.0), th_));
+    odom_trans.transform.rotation = odom_quat;
+
+    // send the transform
+    odom_broadcaster_->sendTransform(odom_trans);
+
     // Publish odometry message
     nav_msgs::msg::Odometry odom;
     odom.header.stamp = current_time;
@@ -76,9 +92,8 @@ private:
     odom.pose.pose.position.x = x_;
     odom.pose.pose.position.y = y_;
     odom.pose.pose.position.z = 0.0;
-    tf2::Quaternion odom_quat;
-    odom_quat.setRPY(0, 0, th_);
-    tf2::convert(odom_quat, odom.pose.pose.orientation);
+    odom.pose.pose.orientation = odom_quat;
+
 
     // Set the velocity
     odom.child_frame_id = base_frame_;
@@ -87,19 +102,6 @@ private:
     odom.twist.twist.angular.z = vth_;
 
     odom_pub_->publish(odom);
-
-    // Publish the transform
-    geometry_msgs::msg::TransformStamped odom_trans;
-    odom_trans.header.stamp = current_time;
-    odom_trans.header.frame_id = odom_frame_;
-    odom_trans.child_frame_id = base_frame_;
-
-    odom_trans.transform.translation.x = x_;
-    odom_trans.transform.translation.y = y_;
-    odom_trans.transform.translation.z = 0.0;
-    odom_trans.transform.rotation = tf2::toMsg(odom_quat);
-
-    odom_broadcaster_->sendTransform(odom_trans);
 
     //last_time_ = current_time;
     last_time_ = this->now();
