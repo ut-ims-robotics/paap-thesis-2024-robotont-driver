@@ -2,7 +2,7 @@
 <?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="2">
   <name>robotont_driver</name>
-  <version>0.1.1</version>
+  <version>0.1.2</version>
   <description>Hardware driver for the Robotont robot</description>
   <author email="sepaap@gmail.com">Sven-Ervin Paap</author>
   <maintainer email="veiko@robotont.eu">Veiko Vunder</maintainer>
