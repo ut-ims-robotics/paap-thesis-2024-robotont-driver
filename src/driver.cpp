@@ -25,11 +25,36 @@ namespace robotont
     bool plugin_power_supply;
     bool plugin_range;
     try {
-      plugin_odom = declare_parameter<bool>("plugin_odom", true);
-      plugin_motor = declare_parameter<bool>("plugin_motor", true);
-      plugin_led_module = declare_parameter<bool>("plugin_led_module", true);
-      plugin_power_supply = declare_parameter<bool>("plugin_power_supply", true);
-      plugin_range = declare_parameter<bool>("plugin_range", true);
+      if (!this->has_parameter("plugin_odom")) {
+        plugin_odom = this->declare_parameter<bool>("plugin_odom", true);
+      } else {
+        plugin_odom = this->get_parameter("plugin_odom").as_bool();
+      }
+
+      if (!this->has_parameter("plugin_motor")) {
+        plugin_motor = this->declare_parameter<bool>("plugin_motor", true);
+      } else {
+        plugin_motor = this->get_parameter("plugin_motor").as_bool();
+      }
+
+      if (!this->has_parameter("plugin_led_module")) {
+        plugin_led_module = this->declare_parameter<bool>("plugin_led_module", true);
+      } else {
+        plugin_led_module = this->get_parameter("plugin_led_module").as_bool();
+      }
+
+      if (!this->has_parameter("plugin_power_supply")) {
+        plugin_power_supply = this->declare_parameter<bool>("plugin_power_supply", true);
+      } else {
+        plugin_power_supply = this->get_parameter("plugin_power_supply").as_bool();
+      }
+
+      if (!this->has_parameter("plugin_range")) {
+        plugin_range = this->declare_parameter<bool>("plugin_range", true);
+      } else {
+        plugin_range = this->get_parameter("plugin_range").as_bool();
+      }
+
     } catch (rclcpp::ParameterTypeException & ex) {
       RCLCPP_ERROR(get_logger(), "A provided plugin param was invalid");
       throw ex;

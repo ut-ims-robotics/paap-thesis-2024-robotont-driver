@@ -154,72 +154,61 @@ void Hardware::get_params()
   auto pt = drivers::serial_driver::Parity::NONE;
   auto sb = drivers::serial_driver::StopBits::ONE;
 
-  try {
-    m_device_name = node_->declare_parameter<std::string>("device_name", "/dev/ttyACM0");
-  } catch (rclcpp::ParameterTypeException & ex) {
-    RCLCPP_ERROR(node_->get_logger(), "The device name provided was invalid");
-    throw ex;
+  // Device name parameter
+  if (!node_->has_parameter("device_name")) {
+    node_->declare_parameter<std::string>("device_name", "/dev/ttyACM0");
+  }
+  m_device_name = node_->get_parameter("device_name").as_string();
+
+  // Baud rate parameter
+  if (!node_->has_parameter("baud_rate")) {
+    node_->declare_parameter<int>("baud_rate", 115200);
+  }
+  baud_rate = node_->get_parameter("baud_rate").as_int();
+
+  // Flow control parameter
+  if (!node_->has_parameter("flow_control")) {
+    node_->declare_parameter<std::string>("flow_control", "none");
+  }
+  const auto fc_string = node_->get_parameter("flow_control").as_string();
+  if (fc_string == "none") {
+    fc = drivers::serial_driver::FlowControl::NONE;
+  } else if (fc_string == "hardware") {
+    fc = drivers::serial_driver::FlowControl::HARDWARE;
+  } else if (fc_string == "software") {
+    fc = drivers::serial_driver::FlowControl::SOFTWARE;
+  } else {
+    throw std::invalid_argument{"The flow_control parameter must be one of: none, software, or hardware."};
   }
 
-  try {
-    baud_rate = node_->declare_parameter<int>("baud_rate", 115200);
-  } catch (rclcpp::ParameterTypeException & ex) {
-    RCLCPP_ERROR(node_->get_logger(), "The baud_rate provided was invalid");
-    throw ex;
+  // Parity parameter
+  if (!node_->has_parameter("parity")) {
+    node_->declare_parameter<std::string>("parity", "none");
+  }
+  const auto pt_string = node_->get_parameter("parity").as_string();
+  if (pt_string == "none") {
+    pt = drivers::serial_driver::Parity::NONE;
+  } else if (pt_string == "odd") {
+    pt = drivers::serial_driver::Parity::ODD;
+  } else if (pt_string == "even") {
+    pt = drivers::serial_driver::Parity::EVEN;
+  } else {
+    throw std::invalid_argument{"The parity parameter must be one of: none, odd, or even."};
   }
 
-  try {
-    const auto fc_string = node_->declare_parameter<std::string>("flow_control", "none");
-
-    if (fc_string == "none") {
-      fc = drivers::serial_driver::FlowControl::NONE;
-    } else if (fc_string == "hardware") {
-      fc = drivers::serial_driver::FlowControl::HARDWARE;
-    } else if (fc_string == "software") {
-      fc = drivers::serial_driver::FlowControl::SOFTWARE;
-    } else {
-      throw std::invalid_argument{
-              "The flow_control parameter must be one of: none, software, or hardware."};
-    }
-  } catch (rclcpp::ParameterTypeException & ex) {
-    RCLCPP_ERROR(node_->get_logger(), "The flow_control provided was invalid");
-    throw ex;
+  // Stop bits parameter
+  if (!node_->has_parameter("stop_bits")) {
+    node_->declare_parameter<std::string>("stop_bits", "1");
   }
-
-  try {
-    const auto pt_string = node_->declare_parameter<std::string>("parity", "none");
-
-    if (pt_string == "none") {
-      pt = drivers::serial_driver::Parity::NONE;
-    } else if (pt_string == "odd") {
-      pt = drivers::serial_driver::Parity::ODD;
-    } else if (pt_string == "even") {
-      pt = drivers::serial_driver::Parity::EVEN;
-    } else {
-      throw std::invalid_argument{
-              "The parity parameter must be one of: none, odd, or even."};
-    }
-  } catch (rclcpp::ParameterTypeException & ex) {
-    RCLCPP_ERROR(node_->get_logger(), "The parity provided was invalid");
-    throw ex;
-  }
-
-  try {
-    const auto sb_string = node_->declare_parameter<std::string>("stop_bits", "1");
-
-    if (sb_string == "1" || sb_string == "1.0" || sb_string == "one") {
-      sb = drivers::serial_driver::StopBits::ONE;
-    } else if (sb_string == "1.5" || sb_string == "one_point_five") {
-      sb = drivers::serial_driver::StopBits::ONE_POINT_FIVE;
-    } else if (sb_string == "2" || sb_string == "2.0" || sb_string == "two") {
-      sb = drivers::serial_driver::StopBits::TWO;
-    } else {
-      throw std::invalid_argument{
-              "The stop_bits parameter must be one of: 1, 1.5, or 2."};
-    }
-  } catch (rclcpp::ParameterTypeException & ex) {
-    RCLCPP_ERROR(node_->get_logger(), "The stop_bits provided was invalid");
-    throw ex;
+  const auto sb_string = node_->get_parameter("stop_bits").as_string();
+  if (sb_string == "1" || sb_string == "1.0" || sb_string == "one") {
+    sb = drivers::serial_driver::StopBits::ONE;
+  } else if (sb_string == "1.5" || sb_string == "one_point_five") {
+    sb = drivers::serial_driver::StopBits::ONE_POINT_FIVE;
+  } else if (sb_string == "2" || sb_string == "2.0" || sb_string == "two") {
+    sb = drivers::serial_driver::StopBits::TWO;
+  } else {
+    throw std::invalid_argument{"The stop_bits parameter must be one of: 1, 1.5, or 2."};
   }
 
   m_device_config = std::make_unique<drivers::serial_driver::SerialPortConfig>(baud_rate, fc, pt, sb);
