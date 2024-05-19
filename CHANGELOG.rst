@@ -2,8 +2,8 @@
 Changelog for package robotont_driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.4 (2024-05-19)
+------------------
 * Changes to parameter handling
 * Contributors: Zhven
 
