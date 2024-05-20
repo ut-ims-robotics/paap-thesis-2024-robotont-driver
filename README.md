@@ -19,7 +19,7 @@ This package handles low-level communication between ROS and robotont hardware.
 
 ### 4. Source install files and start the driver using the launch configuration
 ```bash
-source install/local_setup.bash
+source /opt/ros/humble/setup.bash
 ros2 launch robotont_driver driver_launch.py
 ```
 
