@@ -1,0 +1,4 @@
+[submodule "robotont_driver"]
+	path = robotont_driver
+	url = https://github.com/robotont/robotont_driver.git
+	branch = humble-devel
