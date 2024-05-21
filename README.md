@@ -1,6 +1,10 @@
 # ROS2 driver for the educational robotics platform Robotont
 
-This repository contains the driver created for my bachelor's thesis. It can be found in `robotont-driver` submodule in `src/`.
+This repository contains the driver created for my bachelor's thesis. 
+- Driver source code can be found in `robotont-driver`.
+- Driver release files can be found in `robotont_driver-release`.
+- Robotont release team and release repository registration can be found in `ros2-gbp-github-org` in the file `robotont.tf`.
+- Driver is indexed in rosdistro. The entry can be found in `rosdistro` in the file `humble/distribution.yaml`.
 
 ## Thesis overview
 
