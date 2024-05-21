@@ -2,3 +2,12 @@
 	path = robotont_driver
 	url = https://github.com/robotont/robotont_driver.git
 	branch = humble-devel
+[submodule "robotont_driver-release"]
+	path = robotont_driver-release
+	url = https://github.com/ros2-gbp/robotont_driver-release
+[submodule "rosdistro"]
+	path = rosdistro
+	url = https://github.com/ros/rosdistro
+[submodule "ros2-gbp-github-org"]
+	path = ros2-gbp-github-org
+	url = https://github.com/ros2-gbp/ros2-gbp-github-org
